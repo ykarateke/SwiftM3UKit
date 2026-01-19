@@ -334,6 +334,14 @@ public struct ContentClassifier: ContentClassifying, Sendable {
         }
 
         if season != nil || episode != nil {
+            // Context-aware check for Turkish "Bölüm":
+            // If we found episode number but NO season, and there's a year pattern,
+            // it's likely a movie part (e.g., "John Wick: Bölüm 4 (2023)"),
+            // not a series episode.
+            if season == nil && episode != nil && hasYearPattern(in: name) {
+                return nil
+            }
+
             return (season: season, episode: episode)
         }
 

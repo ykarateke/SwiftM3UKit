@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-01-20
+
+### Fixed
+
+#### Turkish "Bölüm" Context-Aware Detection
+- Fixed misclassification of Turkish movie parts (e.g., "John Wick: Bölüm 4 (2023)")
+- Turkish "Bölüm" now correctly distinguished between:
+  - **Movie Part**: "Bölüm X" with year pattern → Classified as Movie
+  - **Series Episode**: "Sezon X Bölüm Y" or in series group → Classified as Series
+- Improved accuracy: ~35 movie entries no longer misclassified as series episodes
+
+### Improved
+
+#### Documentation
+- Added "Understanding Series Counts" section to README
+- Clarified difference between `series.count` (total episodes) and `uniqueSeriesCount` (unique series)
+- Added Turkish Bölüm detection explanation with examples
+- Updated performance metrics with real Turkish IPTV data (110K+ items)
+
+#### Testing
+- Added 6 comprehensive tests for Turkish "Bölüm" detection
+- Tests cover movies with quality tags (HD, FHD, 4K)
+- Tests verify series with season patterns work correctly
+- All 59 classifier tests passing
+
+#### Tools
+- Added `SeriesDiagnostic` tool for analyzing series grouping
+- Added `DetailedAnalysis` tool for comprehensive M3U content analysis
+- Both tools available via `swift run SeriesDiagnostic` and `swift run DetailedAnalysis`
+
+### Statistics (Real Turkish IPTV Playlist)
+- Total Items: 110,703
+- Live TV: 2,156 channels across 32 groups
+- Movies: 15,079 across 38 categories
+- Series: 93,468 episodes grouped into 4,137 unique series
+- Average: 22.6 episodes per series
+
 ## [1.4.1] - 2026-01-19
 
 ### Performance

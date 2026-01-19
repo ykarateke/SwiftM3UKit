@@ -6,6 +6,22 @@ A modern, memory-efficient M3U/EXTM3U parser framework for IPTV applications.
 [![Platforms](https://img.shields.io/badge/Platforms-iOS%2015%20|%20tvOS%2015%20|%20macOS%2012-blue.svg)](https://developer.apple.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+## What's New in 1.4.2
+
+🎯 **Turkish Content Classification Improvements**
+- Fixed Turkish "Bölüm" (Part/Episode) context-aware detection
+- Movies like "John Wick: Bölüm 4" now correctly classified as movies
+- Series grouping accuracy improved (~35 movies no longer misclassified)
+
+📚 **Enhanced Documentation**
+- Added "Understanding Series Counts" section with clear examples
+- Explained difference between total episodes and unique series count
+- Updated with real Turkish IPTV data statistics (110K+ items)
+
+🔧 **New Analysis Tools**
+- `SeriesDiagnostic` - Analyze series grouping and statistics
+- `DetailedAnalysis` - Comprehensive M3U content breakdown
+
 ## Features
 
 - **Swift 6 Ready**: Full strict concurrency support with `Sendable` types
@@ -35,7 +51,7 @@ Add SwiftM3UKit to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ykarateke/SwiftM3UKit", from: "1.4.1")
+    .package(url: "https://github.com/ykarateke/SwiftM3UKit", from: "1.4.2")
 ]
 ```
 
@@ -199,21 +215,54 @@ for item in playlist.items {
 
 ## Series Statistics
 
+### Understanding Series Counts
+
+⚠️ **Important:** M3U playlists store each episode as a separate entry!
+
+```swift
+let playlist = try await parser.parse(from: url)
+
+// ❌ WRONG: This counts ALL episode entries
+print("Series: \(playlist.series.count)")  // 93,504 episodes
+
+// ✅ CORRECT: This counts unique series
+print("Unique series: \(playlist.uniqueSeriesCount)")  // 4,172 series
+print("Total episodes: \(playlist.totalEpisodeCount)")  // 93,504 episodes
+```
+
+When you parse an IPTV playlist:
+- `playlist.series` = Array of ALL episode items
+- `playlist.series.count` = Total number of episodes (e.g., 93,504)
+- `playlist.uniqueSeriesCount` = Number of unique series (e.g., 4,172)
+- `playlist.totalEpisodeCount` = Same as `series.count` (total episodes)
+
+### Grouping Episodes by Series
+
 Group and analyze TV series:
 
 ```swift
 // Get all series grouped with their episodes
 for series in playlist.seriesGrouped {
     print("\(series.name)")
+    print("  Group: \(series.group ?? "none")")
     print("  Seasons: \(series.seasonCount)")
     print("  Episodes: \(series.episodeCount)")
 
-    for ep in series.episodes {
+    // Show first few episodes
+    for ep in series.episodes.prefix(5) {
         if let s = ep.season, let e = ep.episode {
-            print("    S\(s)E\(e)")
+            print("    S\(s)E\(e) - \(ep.item.name)")
         }
     }
 }
+
+// Example output:
+// Simpsonlar - The Simpsons
+//   Group: DiSNEY PLUS DiZiLERi
+//   Seasons: 35
+//   Episodes: 754
+//     S35E8 - Simpsonlar - The Simpsons S35E08
+//     S35E7 - Simpsonlar - The Simpsons S35E07
 ```
 
 ## Multi-Language Support
@@ -235,6 +284,15 @@ SwiftM3UKit detects season/episode patterns in 11 languages:
 | 🇪🇸 Spanish | Temporada | Capítulo / Episodio |
 
 Universal patterns like `S01E01` are also supported.
+
+### Turkish "Bölüm" Context-Aware Detection
+
+SwiftM3UKit intelligently distinguishes between Turkish "Bölüm" meanings:
+
+- **Movie Part:** "John Wick: Bölüm 4 (2023)" → Classified as **Movie**
+- **Series Episode:** "Kurtlar Vadisi Sezon 1 Bölüm 5" → Classified as **Series**
+
+The classifier uses context clues (year patterns, season numbers) to determine the correct classification.
 
 ## Custom Classification
 
@@ -344,16 +402,19 @@ swift package --disable-sandbox preview-documentation --target SwiftM3UKit
 
 ## Performance
 
-Tested with real-world IPTV playlists:
+Tested with real-world Turkish IPTV playlist:
 
 | Metric | Value |
 |--------|-------|
 | File Size | 34.2 MB |
 | Total Items | 110,703 |
-| Live Channels | 2,148 |
-| Movies | 15,051 |
-| Series Episodes | 93,504 |
-| Unique Series | 2,096 |
+| Live Channels | 2,156 |
+| Movies | 15,079 |
+| Series Episodes | 93,468 |
+| Unique Series | 4,137 |
+| Avg Episodes/Series | 22.6 |
+
+Parse time: ~1.5 seconds on MacBook Pro M1
 
 ## License
 

@@ -179,6 +179,77 @@ struct ClassifierTests {
         #expect(result == .movie)
     }
 
+    // MARK: - Turkish "Bölüm" Context-Aware Detection
+
+    @Test("Classify movie with Turkish Bölüm (Part) and year")
+    func classifyMovieWithBolumAndYear() {
+        // Turkish "Bölüm" can mean both "Part" (movie) and "Episode" (series)
+        // When there's a year and no season, it's a movie part
+        let result = classifier.classify(name: "John Wick: Bölüm 4 (2023)", group: "Filmler", attributes: [:])
+        #expect(result == .movie)
+    }
+
+    @Test("Classify movie with Turkish Bölüm and quality tags")
+    func classifyMovieWithBolumQualityTags() {
+        // Quality variants of the same movie part should all be classified as movies
+        let resultHD = classifier.classify(name: "John Wick: Bölüm 4 - HD (2023)", group: "Dublaj Filmler", attributes: [:])
+        let resultFHD = classifier.classify(name: "John Wick: Bölüm 4 - FHD (2023)", group: "Dublaj Filmler", attributes: [:])
+        let result4K = classifier.classify(name: "John Wick: Bölüm 4 - 4K (2023)", group: "Dublaj Filmler", attributes: [:])
+
+        #expect(resultHD == .movie)
+        #expect(resultFHD == .movie)
+        #expect(result4K == .movie)
+    }
+
+    @Test("Classify movie with Bölüm in Turkish title")
+    func classifyMovieWithBolumInTitle() {
+        // More Turkish movie examples with "Bölüm" meaning "Part"
+        let result1 = classifier.classify(name: "Dune: Çöl Gezegeni Bölüm İki (2024)", group: "Yabancı Filmler", attributes: [:])
+        let result2 = classifier.classify(name: "Harry Potter ve Ölüm Yadigârları: Bölüm 2 (2011)", group: "Yabancı Seri Filmler", attributes: [:])
+
+        #expect(result1 == .movie)
+        #expect(result2 == .movie)
+    }
+
+    @Test("Classify series with Turkish Bölüm (Episode) and season")
+    func classifySeriesWithBolumAndSeason() {
+        // When "Bölüm" appears WITH a season number, it's a series episode
+        let result = classifier.classify(name: "Kurtlar Vadisi Sezon 1 Bölüm 4", group: "Diziler", attributes: [:])
+
+        if case let .series(season, episode) = result {
+            #expect(season == 1)
+            #expect(episode == 4)
+        } else {
+            Issue.record("Expected series content type with season and episode")
+        }
+    }
+
+    @Test("Classify series with Turkish Bölüm and S##E## pattern")
+    func classifySeriesWithBolumAndPattern() {
+        // When "Bölüm" appears with S##E## pattern, it's definitely a series
+        let result = classifier.classify(name: "Eşref Rüya S02E14 Bölüm 14", group: "Güncel TV Dizileri", attributes: [:])
+
+        if case let .series(season, episode) = result {
+            #expect(season == 2)
+            #expect(episode == 14)
+        } else {
+            Issue.record("Expected series content type")
+        }
+    }
+
+    @Test("Classify series with only Bölüm in series group")
+    func classifySeriesWithBolumInSeriesGroup() {
+        // When in a series group without year, "Bölüm" means episode
+        let result = classifier.classify(name: "Show Name Bölüm 5", group: "TV Dizileri", attributes: [:])
+
+        if case let .series(season, episode) = result {
+            #expect(season == nil)
+            #expect(episode == 5)
+        } else {
+            Issue.record("Expected series content type")
+        }
+    }
+
     @Test("Classify movie with altyazili group")
     func classifyMovieWithAltyazili() {
         let result = classifier.classify(name: "Foreign Film", group: "Altyazılı Filmler", attributes: [:])

@@ -19,6 +19,66 @@
             "target": "RealFileTest",
             "configuration": "release",
             "preLaunchTask": "swift: Build Release RealFileTest"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:m3u-parser-swift}",
+            "name": "Debug SeriesDiagnostic",
+            "target": "SeriesDiagnostic",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug SeriesDiagnostic"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:m3u-parser-swift}",
+            "name": "Release SeriesDiagnostic",
+            "target": "SeriesDiagnostic",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release SeriesDiagnostic"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:m3u-parser-swift}",
+            "name": "Debug PlaylistAnalyzer",
+            "target": "PlaylistAnalyzer",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug PlaylistAnalyzer"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:m3u-parser-swift}",
+            "name": "Release PlaylistAnalyzer",
+            "target": "PlaylistAnalyzer",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release PlaylistAnalyzer"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:m3u-parser-swift}",
+            "name": "Debug DetailedAnalysis",
+            "target": "DetailedAnalysis",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug DetailedAnalysis"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:m3u-parser-swift}",
+            "name": "Release DetailedAnalysis",
+            "target": "DetailedAnalysis",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release DetailedAnalysis"
         }
     ]
 }

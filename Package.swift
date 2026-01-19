@@ -9,7 +9,9 @@ let package = Package(
         .macOS(.v12)
     ],
     products: [
-        .library(name: "SwiftM3UKit", targets: ["SwiftM3UKit"])
+        .library(name: "SwiftM3UKit", targets: ["SwiftM3UKit"]),
+        .executable(name: "SeriesDiagnostic", targets: ["SeriesDiagnostic"]),
+        .executable(name: "DetailedAnalysis", targets: ["DetailedAnalysis"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.4")
@@ -32,6 +34,16 @@ let package = Package(
             name: "PlaylistAnalyzer",
             dependencies: ["SwiftM3UKit"],
             path: "Tools/PlaylistAnalyzer"
+        ),
+        .executableTarget(
+            name: "SeriesDiagnostic",
+            dependencies: ["SwiftM3UKit"],
+            path: "Tools/SeriesDiagnostic"
+        ),
+        .executableTarget(
+            name: "DetailedAnalysis",
+            dependencies: ["SwiftM3UKit"],
+            path: "Tools/DetailedAnalysis"
         )
     ]
 )
