@@ -14,6 +14,7 @@ A modern, memory-efficient M3U/EXTM3U parser framework for IPTV applications.
 - **Multi-Language Support**: 11 languages including English, Turkish, Arabic, Chinese, Japanese, Russian, and more
 - **Series Statistics**: Group series by name with season/episode information
 - **XUI/Xtream Codes Support**: Parse `xui-id` and `timeshift` attributes
+- **Catchup/Time-shift TV**: Full support for catchup attributes (`catchup`, `catchup-source`, `catchup-days`)
 - **Async/Await**: Modern Swift concurrency throughout
 - **Multiple Encodings**: UTF-8, Latin-1, and Windows-1252 support
 - **Comprehensive Documentation**: Full DocC documentation with tutorials
@@ -153,6 +154,41 @@ struct MyClassifier: ContentClassifying {
 let parser = M3UParser()
 await parser.setClassifier(MyClassifier())
 ```
+
+## Catchup/Time-shift TV Support
+
+SwiftM3UKit supports catchup (time-shift TV) attributes for replaying past broadcasts:
+
+```swift
+// Get all channels with catchup support
+for item in playlist.catchupItems {
+    print("\(item.name)")
+    print("  Mode: \(item.catchup ?? "none")")
+    print("  Source: \(item.catchupSource ?? "none")")
+    print("  Days: \(item.catchupDays ?? 0)")
+}
+```
+
+### Supported Catchup Modes
+
+| Mode | Description |
+|------|-------------|
+| `default` | Standard catchup URL |
+| `append` | Append timestamp to URL |
+| `shift` | Add timeshift parameter |
+| `flussonic` | Flussonic media server format |
+| `xc` | Xtream Codes format |
+
+### URL Template Placeholders
+
+| Placeholder | Description |
+|-------------|-------------|
+| `{utc}` | Unix timestamp (start) |
+| `{start}` | Start time |
+| `{end}` | End time |
+| `{duration}` | Duration in seconds |
+| `{Y}`, `{m}`, `{d}` | Year, month, day |
+| `{H}`, `{M}`, `{S}` | Hour, minute, second |
 
 ## Supported M3U Attributes
 
