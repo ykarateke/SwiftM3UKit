@@ -290,4 +290,81 @@ struct ParserTests {
         #expect(playlist.catchupItems[0].name == "Catchup Channel 1")
         #expect(playlist.catchupItems[1].name == "Catchup Channel 2")
     }
+
+    // MARK: - tvg-rec Attribute Tests
+
+    @Test("Parse tvg-rec attribute with value 1")
+    func parseTvgRecAttributeOne() async throws {
+        let content = """
+        #EXTM3U
+        #EXTINF:-1 tvg-rec="1",Recordable Channel
+        http://example.com/stream
+        """
+
+        let parser = M3UParser()
+        let playlist = try await parser.parse(data: content.data(using: .utf8)!)
+
+        #expect(playlist.items.count == 1)
+        #expect(playlist.items[0].tvgRec == true)
+    }
+
+    @Test("Parse tvg-rec attribute with value true")
+    func parseTvgRecAttributeTrue() async throws {
+        let content = """
+        #EXTM3U
+        #EXTINF:-1 tvg-rec="true",Recordable Channel
+        http://example.com/stream
+        """
+
+        let parser = M3UParser()
+        let playlist = try await parser.parse(data: content.data(using: .utf8)!)
+
+        #expect(playlist.items.count == 1)
+        #expect(playlist.items[0].tvgRec == true)
+    }
+
+    @Test("Parse tvg-rec attribute with value 0")
+    func parseTvgRecAttributeZero() async throws {
+        let content = """
+        #EXTM3U
+        #EXTINF:-1 tvg-rec="0",Non-recordable Channel
+        http://example.com/stream
+        """
+
+        let parser = M3UParser()
+        let playlist = try await parser.parse(data: content.data(using: .utf8)!)
+
+        #expect(playlist.items.count == 1)
+        #expect(playlist.items[0].tvgRec == nil)
+    }
+
+    @Test("Parse without tvg-rec attribute")
+    func parseWithoutTvgRecAttribute() async throws {
+        let content = """
+        #EXTM3U
+        #EXTINF:-1,Regular Channel
+        http://example.com/stream
+        """
+
+        let parser = M3UParser()
+        let playlist = try await parser.parse(data: content.data(using: .utf8)!)
+
+        #expect(playlist.items.count == 1)
+        #expect(playlist.items[0].tvgRec == nil)
+    }
+
+    @Test("Parse tvg-rec with mixed case")
+    func parseTvgRecMixedCase() async throws {
+        let content = """
+        #EXTM3U
+        #EXTINF:-1 tvg-rec="TRUE",Recordable Channel
+        http://example.com/stream
+        """
+
+        let parser = M3UParser()
+        let playlist = try await parser.parse(data: content.data(using: .utf8)!)
+
+        #expect(playlist.items.count == 1)
+        #expect(playlist.items[0].tvgRec == true)
+    }
 }

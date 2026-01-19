@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-01-19
+
+### Performance
+
+#### Deduplication Performance Optimization (Phase 2)
+- **54% faster** `deduplicated()`: 14.1s → 6.5s
+- **59% faster** `findDuplicates()`: 12.7s → 5.2s
+- **62% faster** `deduplicationStatistics`: 12.3s → 4.6s
+
+#### Optimizations Applied
+- `removeTrailingQualityTags()`: Set-based O(1) lookup instead of iterating 27 tags
+- `normalizeTurkish()`: Quick check before processing (most titles have no Turkish chars)
+- `removeCommonPrefixes()`: Pre-compiled uppercased prefixes with single uppercase call
+
+## [1.4.0] - 2026-01-19
+
+### Added
+
+#### Smart Deduplication Engine
+- `DeduplicationKey` enum for flexible key strategies (title, URL, composite)
+- `DeduplicationOptions` for configuring deduplication behavior
+- `TitleNormalizer` for intelligent title normalization
+- `ChannelNormalizer` for channel-specific normalization
+
+#### M3UPlaylist Deduplication Extensions
+- `M3UPlaylist.deduplicated(by:options:)` - Remove duplicates keeping best quality
+- `M3UPlaylist.findDuplicates(by:options:)` - Find duplicate groups
+- `M3UPlaylist.deduplicationStatistics` - Get duplicate statistics without removal
+- Automatic quality-based selection (keeps highest quality stream)
+
+#### Title Processing
+- Turkish character normalization (ç→c, ğ→g, ı→i, ö→o, ş→s, ü→u)
+- Quality tag removal (HD, FHD, 4K, HEVC, etc.)
+- Country prefix removal (TR:, UK:, US:, etc.)
+- Bracket content removal ([HD], (TR), etc.)
+- `M3UItem.cleanTitle` - Sanitized title for display
+- `M3UItem.normalizedTitle` - Normalized title for comparison
+
+#### URL Processing
+- `URL.m3uNormalizedPath` - Normalized URL path for comparison
+- `URL.m3uStreamID` - Extract stream ID from IPTV URLs
+- Automatic removal of tracking parameters
+
+### Performance
+- Pre-compiled regex patterns for title processing
+- Deduplication key caching for repeated lookups
+- Single-pass algorithm for statistics calculation
+
 ## [1.3.0] - 2026-01-19
 
 ### Added
@@ -124,7 +172,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Swift Version
 - Swift 6.0 with strict concurrency enabled
 
-[Unreleased]: https://github.com/ykarateke/SwiftM3UKit/compare/1.3.0...HEAD
+[Unreleased]: https://github.com/ykarateke/SwiftM3UKit/compare/1.4.1...HEAD
+[1.4.1]: https://github.com/ykarateke/SwiftM3UKit/compare/1.4.0...1.4.1
+[1.4.0]: https://github.com/ykarateke/SwiftM3UKit/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/ykarateke/SwiftM3UKit/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/ykarateke/SwiftM3UKit/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/ykarateke/SwiftM3UKit/compare/1.0.0...1.1.0

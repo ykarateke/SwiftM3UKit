@@ -27,6 +27,11 @@ let package = Package(
             resources: [
                 .copy("Resources")
             ]
+        ),
+        .executableTarget(
+            name: "PlaylistAnalyzer",
+            dependencies: ["SwiftM3UKit"],
+            path: "Tools/PlaylistAnalyzer"
         )
     ]
 )

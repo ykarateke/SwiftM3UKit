@@ -64,6 +64,9 @@ public struct M3UItem: Sendable, Hashable, Identifiable, Codable {
     /// Time correction in seconds for catchup
     public let catchupCorrection: Int?
 
+    /// Recording capability flag (from tvg-rec attribute)
+    public let tvgRec: Bool?
+
     /// Creates a new M3U item.
     ///
     /// - Parameters:
@@ -82,6 +85,7 @@ public struct M3UItem: Sendable, Hashable, Identifiable, Codable {
     ///   - catchupSource: Optional URL template for catchup streams
     ///   - catchupDays: Optional number of days available for catchup
     ///   - catchupCorrection: Optional time correction in seconds for catchup
+    ///   - tvgRec: Optional recording capability flag
     public init(
         id: UUID = UUID(),
         name: String,
@@ -97,7 +101,8 @@ public struct M3UItem: Sendable, Hashable, Identifiable, Codable {
         catchup: String? = nil,
         catchupSource: String? = nil,
         catchupDays: Int? = nil,
-        catchupCorrection: Int? = nil
+        catchupCorrection: Int? = nil,
+        tvgRec: Bool? = nil
     ) {
         self.id = id
         self.name = name
@@ -114,5 +119,6 @@ public struct M3UItem: Sendable, Hashable, Identifiable, Codable {
         self.catchupSource = catchupSource
         self.catchupDays = catchupDays
         self.catchupCorrection = catchupCorrection
+        self.tvgRec = tvgRec
     }
 }

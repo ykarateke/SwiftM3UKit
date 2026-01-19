@@ -12,6 +12,7 @@ A modern, memory-efficient M3U/EXTM3U parser framework for IPTV applications.
 - **Memory Efficient**: Streaming parser using `AsyncSequence` for large files (100K+ items)
 - **Content Classification**: Automatic detection of Live TV, Movies, and TV Series
 - **Quality Score Engine**: Automatic quality detection and scoring (resolution, codec, protocol)
+- **Smart Deduplication**: Remove duplicate streams keeping best quality with intelligent title normalization
 - **Multi-Language Support**: 11 languages including English, Turkish, Arabic, Chinese, Japanese, Russian, and more
 - **Series Statistics**: Group series by name with season/episode information
 - **XUI/Xtream Codes Support**: Parse `xui-id` and `timeshift` attributes
@@ -34,7 +35,7 @@ Add SwiftM3UKit to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ykarateke/SwiftM3UKit", from: "1.3.0")
+    .package(url: "https://github.com/ykarateke/SwiftM3UKit", from: "1.4.1")
 ]
 ```
 
@@ -131,6 +132,53 @@ print("Average score: \(stats.averageScore)")
 **Codec:** `HEVC`, `H.265`, `H265`, `x265`, `H.264`, `H264`, `AVC`, `x264`
 
 **Protocol:** `.m3u8` (HLS), `https://`, `http://`
+
+## Smart Deduplication
+
+Remove duplicate streams while keeping the best quality version:
+
+```swift
+// Remove duplicates (keeps highest quality)
+let unique = playlist.deduplicated()
+print("Removed \(playlist.items.count - unique.items.count) duplicates")
+
+// Find duplicate groups
+let groups = playlist.findDuplicates()
+for group in groups {
+    print("\(group.key): \(group.items.count) duplicates")
+}
+
+// Get statistics without removing
+let stats = playlist.deduplicationStatistics
+print("Found \(stats.duplicateCount) duplicates")
+print("Unique items: \(stats.uniqueCount)")
+```
+
+### Deduplication Options
+
+```swift
+// Custom deduplication key
+let unique = playlist.deduplicated(by: .url)  // By URL only
+let unique = playlist.deduplicated(by: .title)  // By title only
+let unique = playlist.deduplicated(by: .composite)  // Title + Group (default)
+
+// Custom options
+let options = DeduplicationOptions(
+    caseSensitive: false,
+    normalizeTitle: true,
+    removeQualityTags: true
+)
+let unique = playlist.deduplicated(options: options)
+```
+
+### Title Normalization
+
+The deduplication engine normalizes titles for accurate matching:
+
+- Turkish characters: `ç→c`, `ğ→g`, `ı→i`, `ö→o`, `ş→s`, `ü→u`
+- Quality tags removed: `HD`, `FHD`, `4K`, `HEVC`, `1080p`, etc.
+- Country prefixes removed: `TR:`, `UK:`, `US:`, `DE:`, etc.
+- Bracket content removed: `[HD]`, `(TR)`, etc.
 
 ## Content Types
 
