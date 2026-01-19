@@ -32,7 +32,7 @@ Add SwiftM3UKit to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ykarateke/SwiftM3UKit", from: "1.1.0")
+    .package(url: "https://github.com/ykarateke/SwiftM3UKit", from: "1.2.0")
 ]
 ```
 
@@ -164,6 +164,10 @@ await parser.setClassifier(MyClassifier())
 | `group-title` | Category/group | `group` |
 | `xui-id` | XUI panel ID | `xuiID` |
 | `timeshift` | Timeshift duration (seconds) | `timeshift` |
+| `catchup` | Catchup mode (default, append, shift, flussonic, xc) | `catchup` |
+| `catchup-source` | URL template for catchup streams | `catchupSource` |
+| `catchup-days` | Number of days available for catchup | `catchupDays` |
+| `catchup-correction` | Time correction in seconds | `catchupCorrection` |
 
 ## Supported Directives
 

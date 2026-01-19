@@ -52,6 +52,18 @@ public struct M3UItem: Sendable, Hashable, Identifiable, Codable {
     /// Timeshift duration in seconds (from timeshift attribute)
     public let timeshift: Int?
 
+    /// Catchup mode (default, append, shift, flussonic, xc)
+    public let catchup: String?
+
+    /// URL template for catchup streams
+    public let catchupSource: String?
+
+    /// Number of days available for catchup
+    public let catchupDays: Int?
+
+    /// Time correction in seconds for catchup
+    public let catchupCorrection: Int?
+
     /// Creates a new M3U item.
     ///
     /// - Parameters:
@@ -66,6 +78,10 @@ public struct M3UItem: Sendable, Hashable, Identifiable, Codable {
     ///   - attributes: Additional parsed attributes
     ///   - xuiID: Optional XUI panel ID
     ///   - timeshift: Optional timeshift duration in seconds
+    ///   - catchup: Optional catchup mode (default, append, shift, flussonic, xc)
+    ///   - catchupSource: Optional URL template for catchup streams
+    ///   - catchupDays: Optional number of days available for catchup
+    ///   - catchupCorrection: Optional time correction in seconds for catchup
     public init(
         id: UUID = UUID(),
         name: String,
@@ -77,7 +93,11 @@ public struct M3UItem: Sendable, Hashable, Identifiable, Codable {
         duration: Int? = nil,
         attributes: [String: String] = [:],
         xuiID: String? = nil,
-        timeshift: Int? = nil
+        timeshift: Int? = nil,
+        catchup: String? = nil,
+        catchupSource: String? = nil,
+        catchupDays: Int? = nil,
+        catchupCorrection: Int? = nil
     ) {
         self.id = id
         self.name = name
@@ -90,5 +110,9 @@ public struct M3UItem: Sendable, Hashable, Identifiable, Codable {
         self.attributes = attributes
         self.xuiID = xuiID
         self.timeshift = timeshift
+        self.catchup = catchup
+        self.catchupSource = catchupSource
+        self.catchupDays = catchupDays
+        self.catchupCorrection = catchupCorrection
     }
 }

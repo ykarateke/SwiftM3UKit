@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-01-19
+
+### Added
+
+#### Catchup/Time-shift TV Support
+- `M3UItem.catchup` property for catchup mode (`catchup` attribute)
+  - Supported modes: `default`, `append`, `shift`, `flussonic`, `xc`
+- `M3UItem.catchupSource` property for URL template (`catchup-source` attribute)
+  - Supports placeholders: `{utc}`, `{start}`, `{end}`, `{duration}`, `{Y}`, `{m}`, `{d}`, `{H}`, `{M}`, `{S}`
+- `M3UItem.catchupDays` property for archive duration (`catchup-days` attribute)
+- `M3UItem.catchupCorrection` property for time correction (`catchup-correction` attribute)
+- `M3UPlaylist.catchupItems` computed property for filtering items with catchup support
+
 ## [1.1.0] - 2025-01-19
 
 ### Added
@@ -79,6 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Swift Version
 - Swift 6.0 with strict concurrency enabled
 
-[Unreleased]: https://github.com/ykarateke/SwiftM3UKit/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/ykarateke/SwiftM3UKit/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/ykarateke/SwiftM3UKit/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/ykarateke/SwiftM3UKit/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/ykarateke/SwiftM3UKit/releases/tag/1.0.0

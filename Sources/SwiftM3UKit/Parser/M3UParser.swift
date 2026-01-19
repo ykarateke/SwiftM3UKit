@@ -191,6 +191,12 @@ public actor M3UParser {
         let xuiID = extinf.attributes["xui-id"]
         let timeshift = extinf.attributes["timeshift"].flatMap { Int($0) }
 
+        // Extract catchup attributes
+        let catchup = extinf.attributes["catchup"]
+        let catchupSource = extinf.attributes["catchup-source"]
+        let catchupDays = extinf.attributes["catchup-days"].flatMap { Int($0) }
+        let catchupCorrection = extinf.attributes["catchup-correction"].flatMap { Int($0) }
+
         return M3UItem(
             name: extinf.title,
             url: url,
@@ -201,7 +207,11 @@ public actor M3UParser {
             duration: extinf.duration == -1 ? nil : extinf.duration,
             attributes: extinf.attributes,
             xuiID: xuiID,
-            timeshift: timeshift
+            timeshift: timeshift,
+            catchup: catchup,
+            catchupSource: catchupSource,
+            catchupDays: catchupDays,
+            catchupCorrection: catchupCorrection
         )
     }
 
@@ -279,6 +289,12 @@ public actor M3UParser {
         let xuiID = extinf.attributes["xui-id"]
         let timeshift = extinf.attributes["timeshift"].flatMap { Int($0) }
 
+        // Extract catchup attributes
+        let catchup = extinf.attributes["catchup"]
+        let catchupSource = extinf.attributes["catchup-source"]
+        let catchupDays = extinf.attributes["catchup-days"].flatMap { Int($0) }
+        let catchupCorrection = extinf.attributes["catchup-correction"].flatMap { Int($0) }
+
         return M3UItem(
             name: extinf.title,
             url: url,
@@ -289,7 +305,11 @@ public actor M3UParser {
             duration: extinf.duration == -1 ? nil : extinf.duration,
             attributes: extinf.attributes,
             xuiID: xuiID,
-            timeshift: timeshift
+            timeshift: timeshift,
+            catchup: catchup,
+            catchupSource: catchupSource,
+            catchupDays: catchupDays,
+            catchupCorrection: catchupCorrection
         )
     }
 
@@ -309,6 +329,12 @@ public actor M3UParser {
         let xuiID = extinf.attributes["xui-id"]
         let timeshift = extinf.attributes["timeshift"].flatMap { Int($0) }
 
+        // Extract catchup attributes
+        let catchup = extinf.attributes["catchup"]
+        let catchupSource = extinf.attributes["catchup-source"]
+        let catchupDays = extinf.attributes["catchup-days"].flatMap { Int($0) }
+        let catchupCorrection = extinf.attributes["catchup-correction"].flatMap { Int($0) }
+
         return M3UItem(
             name: extinf.title,
             url: url,
@@ -319,7 +345,11 @@ public actor M3UParser {
             duration: extinf.duration == -1 ? nil : extinf.duration,
             attributes: extinf.attributes,
             xuiID: xuiID,
-            timeshift: timeshift
+            timeshift: timeshift,
+            catchup: catchup,
+            catchupSource: catchupSource,
+            catchupDays: catchupDays,
+            catchupCorrection: catchupCorrection
         )
     }
 }

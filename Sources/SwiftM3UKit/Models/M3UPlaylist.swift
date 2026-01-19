@@ -62,6 +62,11 @@ public struct M3UPlaylist: Sendable {
         Array(Set(items.compactMap(\.group))).sorted()
     }
 
+    /// Items that support catchup/timeshift functionality
+    public var catchupItems: [M3UItem] {
+        items.filter { $0.catchup != nil || $0.catchupSource != nil }
+    }
+
     // MARK: - Series Statistics
 
     /// Information about a TV series including all its episodes

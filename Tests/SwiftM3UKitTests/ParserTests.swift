@@ -224,4 +224,70 @@ struct ParserTests {
         #expect(playlist.items.count == 1)
         #expect(playlist.items[0].name == "Channel")
     }
+
+    // MARK: - Catchup Attribute Tests
+
+    @Test("Parse catchup attributes")
+    func parseCatchupAttributes() async throws {
+        let content = """
+        #EXTM3U
+        #EXTINF:-1 catchup="shift" catchup-source="http://example.com/{utc}" catchup-days="3" catchup-correction="3600",Live Channel
+        http://stream.example.com/live
+        """
+
+        let parser = M3UParser()
+        let playlist = try await parser.parse(data: content.data(using: .utf8)!)
+
+        #expect(playlist.items.count == 1)
+        let item = playlist.items[0]
+        #expect(item.catchup == "shift")
+        #expect(item.catchupSource == "http://example.com/{utc}")
+        #expect(item.catchupDays == 3)
+        #expect(item.catchupCorrection == 3600)
+    }
+
+    @Test("Parse catchup with different modes")
+    func parseCatchupModes() async throws {
+        let content = """
+        #EXTM3U
+        #EXTINF:-1 catchup="default" catchup-days="7",Channel Default
+        http://example.com/ch1
+        #EXTINF:-1 catchup="append" catchup-days="5",Channel Append
+        http://example.com/ch2
+        #EXTINF:-1 catchup="flussonic" catchup-source="http://example.com/video-{utc}",Channel Flussonic
+        http://example.com/ch3
+        """
+
+        let parser = M3UParser()
+        let playlist = try await parser.parse(data: content.data(using: .utf8)!)
+
+        #expect(playlist.items.count == 3)
+        #expect(playlist.items[0].catchup == "default")
+        #expect(playlist.items[0].catchupDays == 7)
+        #expect(playlist.items[1].catchup == "append")
+        #expect(playlist.items[1].catchupDays == 5)
+        #expect(playlist.items[2].catchup == "flussonic")
+        #expect(playlist.items[2].catchupSource == "http://example.com/video-{utc}")
+    }
+
+    @Test("Get catchupItems from playlist")
+    func getCatchupItems() async throws {
+        let content = """
+        #EXTM3U
+        #EXTINF:-1 catchup="default",Catchup Channel 1
+        http://example.com/catchup1
+        #EXTINF:-1,Normal Channel
+        http://example.com/normal
+        #EXTINF:-1 catchup-source="http://example.com/{start}",Catchup Channel 2
+        http://example.com/catchup2
+        """
+
+        let parser = M3UParser()
+        let playlist = try await parser.parse(data: content.data(using: .utf8)!)
+
+        #expect(playlist.items.count == 3)
+        #expect(playlist.catchupItems.count == 2)
+        #expect(playlist.catchupItems[0].name == "Catchup Channel 1")
+        #expect(playlist.catchupItems[1].name == "Catchup Channel 2")
+    }
 }

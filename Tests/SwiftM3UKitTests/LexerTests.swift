@@ -264,4 +264,38 @@ struct LexerTests {
             Issue.record("Expected extSessionData token")
         }
     }
+
+    // MARK: - Catchup Attribute Tests
+
+    @Test("Tokenize EXTINF with catchup attributes")
+    func tokenizeCatchupAttributes() {
+        let line = #"#EXTINF:-1 catchup="default" catchup-source="http://example.com/{start}" catchup-days="7",Test Channel"#
+        let token = lexer.tokenize(line: line)
+
+        if case let .extinf(_, attributes, title) = token {
+            #expect(attributes["catchup"] == "default")
+            #expect(attributes["catchup-source"] == "http://example.com/{start}")
+            #expect(attributes["catchup-days"] == "7")
+            #expect(title == "Test Channel")
+        } else {
+            Issue.record("Expected extinf token")
+        }
+    }
+
+    @Test("Tokenize EXTINF with all catchup attributes")
+    func tokenizeAllCatchupAttributes() {
+        let line = #"#EXTINF:-1 tvg-id="bbc1" catchup="shift" catchup-source="http://example.com/{utc}" catchup-days="3" catchup-correction="3600",BBC One HD"#
+        let token = lexer.tokenize(line: line)
+
+        if case let .extinf(_, attributes, title) = token {
+            #expect(attributes["tvg-id"] == "bbc1")
+            #expect(attributes["catchup"] == "shift")
+            #expect(attributes["catchup-source"] == "http://example.com/{utc}")
+            #expect(attributes["catchup-days"] == "3")
+            #expect(attributes["catchup-correction"] == "3600")
+            #expect(title == "BBC One HD")
+        } else {
+            Issue.record("Expected extinf token")
+        }
+    }
 }
