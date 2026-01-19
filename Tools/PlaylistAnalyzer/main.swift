@@ -1,7 +1,6 @@
 import Foundation
 import SwiftM3UKit
 
-@main
 struct PlaylistAnalyzer {
     static func main() async throws {
         let playlistPath = "docs/playlist_5gykarateke_plus.m3u"
@@ -112,4 +111,9 @@ struct PlaylistAnalyzer {
         print("New features total:      \(String(format: "%.3f", totalNewFeatures))s")
         print("As % of parse time:      \(String(format: "%.1f", percentOfParse))%")
     }
+}
+
+// Entry point
+Task {
+    try await PlaylistAnalyzer.main()
 }

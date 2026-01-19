@@ -1,7 +1,6 @@
 import Foundation
 import SwiftM3UKit
 
-@main
 struct SeriesDiagnostic {
     static func main() async throws {
         let playlistPath = "docs/playlist_5gykarateke_plus.m3u"
@@ -179,4 +178,9 @@ struct SeriesDiagnostic {
 
         print()
     }
+}
+
+// Entry point
+Task {
+    try await SeriesDiagnostic.main()
 }

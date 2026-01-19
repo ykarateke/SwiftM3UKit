@@ -1,7 +1,6 @@
 import Foundation
 import SwiftM3UKit
 
-@main
 struct DetailedAnalysis {
     static func main() async throws {
         let playlistPath = "docs/playlist_5gykarateke_plus.m3u"
@@ -175,4 +174,9 @@ struct DetailedAnalysis {
         print("   • Ortalama \(String(format: "%.1f", Double(playlist.totalEpisodeCount) / Double(playlist.uniqueSeriesCount))) bölüm/dizi")
         print()
     }
+}
+
+// Entry point
+Task {
+    try await DetailedAnalysis.main()
 }
