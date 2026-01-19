@@ -1,0 +1,13 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="valid" group-title="Test",Valid Channel
+http://example.com/valid
+#EXTINF:-1 missing closing quote tvg-logo="http://example.com/logo.png group-title="Broken",Broken Quote
+http://example.com/broken
+#EXTINF:abc invalid-duration,Invalid Duration
+http://example.com/invalid
+#EXTINF:-1,No Attributes Channel
+http://example.com/noattr
+
+Random line without URL
+#EXTINF:-1 tvg-id="another" group-title="Test",Another Valid
+http://example.com/another

@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:m3u-parser-swift}",
+            "name": "Debug RealFileTest",
+            "target": "RealFileTest",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug RealFileTest"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:m3u-parser-swift}",
+            "name": "Release RealFileTest",
+            "target": "RealFileTest",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release RealFileTest"
+        }
+    ]
+}

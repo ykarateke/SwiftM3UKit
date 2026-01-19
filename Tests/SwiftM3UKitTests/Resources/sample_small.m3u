@@ -1,0 +1,13 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="bbc1.uk" tvg-name="BBC One HD" tvg-logo="http://example.com/bbc1.png" group-title="UK Channels",BBC One HD
+http://example.com/stream/bbc1
+#EXTINF:-1 tvg-id="bbc2.uk" tvg-name="BBC Two HD" tvg-logo="http://example.com/bbc2.png" group-title="UK Channels",BBC Two HD
+http://example.com/stream/bbc2
+#EXTINF:-1 tvg-id="cnn.us" tvg-name="CNN International" tvg-logo="http://example.com/cnn.png" group-title="News",CNN International
+http://example.com/stream/cnn
+#EXTINF:7200 tvg-name="The Matrix (1999)" group-title="Movies",The Matrix (1999)
+http://example.com/vod/matrix.mp4
+#EXTINF:5400 tvg-name="Breaking Bad S01E01" group-title="Series",Breaking Bad S01E01
+http://example.com/vod/bb_s01e01.mp4
+#EXTINF:5400 tvg-name="Breaking Bad S01E02" group-title="Series",Breaking Bad S01E02
+http://example.com/vod/bb_s01e02.mp4

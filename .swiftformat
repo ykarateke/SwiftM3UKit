@@ -1,0 +1,14 @@
+--swiftversion 6.0
+--indent 4
+--indentcase true
+--trimwhitespace always
+--voidtype void
+--wrapcollections before-first
+--wraparguments before-first
+--wrapparameters before-first
+--self remove
+--header strip
+--disable redundantSelf
+--enable isEmpty
+--enable wrapEnumCases
+--enable wrapSwitchCases

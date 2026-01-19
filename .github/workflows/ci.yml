@@ -1,0 +1,127 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: macos-14
+    strategy:
+      matrix:
+        xcode: ['15.4', '16.0']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
+
+      - name: Show Swift version
+        run: swift --version
+
+      - name: Build
+        run: swift build -v
+
+      - name: Run Tests
+        run: swift test --parallel -v
+
+  build-platforms:
+    name: Build for ${{ matrix.platform }}
+    runs-on: macos-14
+    strategy:
+      matrix:
+        platform: [iOS, tvOS, macOS]
+        include:
+          - platform: iOS
+            destination: 'platform=iOS Simulator,name=iPhone 15,OS=17.5'
+          - platform: tvOS
+            destination: 'platform=tvOS Simulator,name=Apple TV,OS=17.5'
+          - platform: macOS
+            destination: 'platform=macOS'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 15.4
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Build for ${{ matrix.platform }}
+        run: |
+          xcodebuild build \
+            -scheme SwiftM3UKit \
+            -destination '${{ matrix.destination }}' \
+            -skipPackagePluginValidation
+
+  documentation:
+    name: Generate Documentation
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 15.4
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Generate Documentation
+        run: |
+          swift package generate-documentation \
+            --target SwiftM3UKit \
+            --disable-indexing \
+            --transform-for-static-hosting \
+            --output-path docs
+
+      - name: Upload Documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: docs
+          retention-days: 7
+
+  lint:
+    name: SwiftLint
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Run SwiftLint
+        run: swiftlint lint --strict --reporter github-actions-logging
+
+  code-coverage:
+    name: Code Coverage
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 15.4
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Run Tests with Coverage
+        run: swift test --enable-code-coverage --parallel
+
+      - name: Generate Coverage Report
+        run: |
+          xcrun llvm-cov export \
+            .build/debug/SwiftM3UKitPackageTests.xctest/Contents/MacOS/SwiftM3UKitPackageTests \
+            -instr-profile .build/debug/codecov/default.profdata \
+            -format lcov \
+            -ignore-filename-regex '\.build|Tests' \
+            > coverage.lcov
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.lcov
+          fail_ci_if_error: false

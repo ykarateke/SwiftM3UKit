@@ -1,0 +1,45 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="ch1" tvg-name="Channel 1 HD" tvg-logo="http://example.com/ch1.png" group-title="Entertainment",Channel 1 HD
+http://example.com/stream/ch1
+#EXTINF:-1 tvg-id="ch2" tvg-name="Channel 2 FHD" tvg-logo="http://example.com/ch2.png" group-title="Entertainment",Channel 2 FHD
+http://example.com/stream/ch2
+#EXTINF:-1 tvg-id="ch3" tvg-name="Channel 3 4K" tvg-logo="http://example.com/ch3.png" group-title="Entertainment",Channel 3 4K
+http://example.com/stream/ch3
+#EXTINF:-1 tvg-id="news1" tvg-name="News Channel 1" tvg-logo="http://example.com/news1.png" group-title="News",News Channel 1
+http://example.com/stream/news1
+#EXTINF:-1 tvg-id="news2" tvg-name="News Channel 2" tvg-logo="http://example.com/news2.png" group-title="News",News Channel 2
+http://example.com/stream/news2
+#EXTINF:-1 tvg-id="sports1" tvg-name="Sports HD" tvg-logo="http://example.com/sports1.png" group-title="Sports",Sports HD
+http://example.com/stream/sports1
+#EXTINF:-1 tvg-id="sports2" tvg-name="Sports 2 FHD" tvg-logo="http://example.com/sports2.png" group-title="Sports",Sports 2 FHD
+http://example.com/stream/sports2
+#EXTINF:-1 tvg-id="kids1" tvg-name="Kids Channel" tvg-logo="http://example.com/kids1.png" group-title="Kids",Kids Channel
+http://example.com/stream/kids1
+#EXTINF:-1 tvg-id="doc1" tvg-name="Documentary HD" tvg-logo="http://example.com/doc1.png" group-title="Documentary",Documentary HD
+http://example.com/stream/doc1
+#EXTINF:-1 tvg-id="music1" tvg-name="Music Channel" tvg-logo="http://example.com/music1.png" group-title="Music",Music Channel
+http://example.com/stream/music1
+#EXTINF:7200 tvg-name="Inception (2010)" group-title="Movies",Inception (2010)
+http://example.com/vod/inception.mp4
+#EXTINF:8100 tvg-name="The Dark Knight (2008)" group-title="Movies",The Dark Knight (2008)
+http://example.com/vod/dark_knight.mp4
+#EXTINF:6600 tvg-name="Interstellar (2014)" group-title="Movies",Interstellar (2014)
+http://example.com/vod/interstellar.mp4
+#EXTINF:5400 tvg-name="Avatar (2009)" group-title="Movies",Avatar (2009)
+http://example.com/vod/avatar.mp4
+#EXTINF:7800 tvg-name="The Shawshank Redemption (1994)" group-title="Movies",The Shawshank Redemption (1994)
+http://example.com/vod/shawshank.mp4
+#EXTINF:3000 tvg-name="Game of Thrones S01E01" group-title="Series|Drama",Game of Thrones S01E01
+http://example.com/vod/got_s01e01.mp4
+#EXTINF:3000 tvg-name="Game of Thrones S01E02" group-title="Series|Drama",Game of Thrones S01E02
+http://example.com/vod/got_s01e02.mp4
+#EXTINF:3000 tvg-name="Game of Thrones S01E03" group-title="Series|Drama",Game of Thrones S01E03
+http://example.com/vod/got_s01e03.mp4
+#EXTINF:2700 tvg-name="Friends Season 1 Episode 1" group-title="Series|Comedy",Friends Season 1 Episode 1
+http://example.com/vod/friends_s01e01.mp4
+#EXTINF:2700 tvg-name="Friends Season 1 Episode 2" group-title="Series|Comedy",Friends Season 1 Episode 2
+http://example.com/vod/friends_s01e02.mp4
+#EXTINF:2700 tvg-name="Kurtlar Vadisi Sezon 1 Bölüm 1" group-title="Series|Turkish",Kurtlar Vadisi Sezon 1 Bölüm 1
+http://example.com/vod/kv_s01e01.mp4
+#EXTINF:2700 tvg-name="Kurtlar Vadisi Sezon 1 Bölüm 2" group-title="Series|Turkish",Kurtlar Vadisi Sezon 1 Bölüm 2
+http://example.com/vod/kv_s01e02.mp4
