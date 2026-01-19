@@ -11,6 +11,7 @@ A modern, memory-efficient M3U/EXTM3U parser framework for IPTV applications.
 - **Swift 6 Ready**: Full strict concurrency support with `Sendable` types
 - **Memory Efficient**: Streaming parser using `AsyncSequence` for large files (100K+ items)
 - **Content Classification**: Automatic detection of Live TV, Movies, and TV Series
+- **Quality Score Engine**: Automatic quality detection and scoring (resolution, codec, protocol)
 - **Multi-Language Support**: 11 languages including English, Turkish, Arabic, Chinese, Japanese, Russian, and more
 - **Series Statistics**: Group series by name with season/episode information
 - **XUI/Xtream Codes Support**: Parse `xui-id` and `timeshift` attributes
@@ -33,7 +34,7 @@ Add SwiftM3UKit to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ykarateke/SwiftM3UKit", from: "1.2.0")
+    .package(url: "https://github.com/ykarateke/SwiftM3UKit", from: "1.3.0")
 ]
 ```
 
@@ -82,6 +83,54 @@ for try await item in parser.parseStream(from: url) {
     print(item.name)
 }
 ```
+
+## Quality Score Engine
+
+SwiftM3UKit automatically detects stream quality and calculates a score from 0-100:
+
+```swift
+// Find the best quality BBC stream
+if let best = playlist.bestQualityItem(for: "BBC One") {
+    print("\(best.name) - Score: \(best.qualityScore)")
+    print("Resolution: \(best.resolution ?? .sd)")
+    print("Codec: \(best.codec ?? .unknown)")
+}
+
+// Get HD and higher channels
+let hdChannels = playlist.items(minResolution: .hd)
+
+// Sort all items by quality
+let ranked = playlist.sortedByQuality()
+
+// Quality statistics
+let stats = playlist.qualityStatistics
+print("4K channels: \(stats.resolutionDistribution[.fourK] ?? 0)")
+print("Average score: \(stats.averageScore)")
+```
+
+### Score Calculation
+
+| Component | Points |
+|-----------|--------|
+| Base score | 25 |
+| 4K | +40 |
+| UHD (2160p) | +35 |
+| FHD (1080p) | +30 |
+| HD (720p) | +20 |
+| SD (480p) | +10 |
+| HEVC/H.265 | +20 |
+| H.264 | +10 |
+| HLS (.m3u8) | +15 |
+| HTTPS | +10 |
+| HTTP | +5 |
+
+### Detection Patterns
+
+**Resolution:** `4K`, `[4K]`, `UHD`, `2160p`, `FHD`, `1080p`, `Full HD`, `HD`, `720p`, `SD`, `480p`
+
+**Codec:** `HEVC`, `H.265`, `H265`, `x265`, `H.264`, `H264`, `AVC`, `x264`
+
+**Protocol:** `.m3u8` (HLS), `https://`, `http://`
 
 ## Content Types
 

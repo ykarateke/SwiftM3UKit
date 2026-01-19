@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-01-19
+
+### Added
+
+#### Quality Score Engine
+- `Resolution` enum for video resolution levels (SD, HD, FHD, UHD, 4K)
+- `Codec` enum for video codecs (H.264, H.265/HEVC)
+- `StreamProtocol` enum for streaming protocols (HTTP, HTTPS, HLS)
+- `QualityInfo` struct containing resolution, codec, protocol, score, and explicit detection flag
+- `QualityAnalyzing` protocol for custom quality analyzers
+- `QualityAnalyzer` default implementation with pattern-based detection
+
+#### M3UItem Quality Extensions
+- `M3UItem.qualityInfo` computed property for quality analysis
+- `M3UItem.qualityScore` shortcut for quality score (0-100)
+- `M3UItem.resolution` shortcut for detected resolution
+- `M3UItem.codec` shortcut for detected codec
+
+#### M3UPlaylist Quality Extensions
+- `M3UPlaylist.sortedByQuality()` for quality-based sorting
+- `M3UPlaylist.bestQualityItem(for:)` to find highest quality match
+- `M3UPlaylist.qualityRankedItems(for:)` for quality-ranked search results
+- `M3UPlaylist.items(minResolution:)` for resolution-based filtering
+- `M3UPlaylist.items(minQualityScore:)` for score-based filtering
+- `M3UPlaylist.qualityStatistics` for playlist-wide quality statistics
+
+#### Quality Detection Patterns
+- Resolution: 4K, [4K], UHD, 2160p, FHD, 1080p, Full HD, HD, 720p, SD, 480p
+- Unicode indicators: superscript HD, UHD characters
+- Codec: HEVC, H.265, H265, x265, H.264, H264, AVC, x264
+- Protocol: .m3u8 (HLS), https://, http://
+
 ## [1.2.0] - 2026-01-19
 
 ### Added
@@ -92,7 +124,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Swift Version
 - Swift 6.0 with strict concurrency enabled
 
-[Unreleased]: https://github.com/ykarateke/SwiftM3UKit/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/ykarateke/SwiftM3UKit/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/ykarateke/SwiftM3UKit/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/ykarateke/SwiftM3UKit/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/ykarateke/SwiftM3UKit/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/ykarateke/SwiftM3UKit/releases/tag/1.0.0
