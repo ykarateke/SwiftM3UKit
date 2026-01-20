@@ -51,8 +51,8 @@ struct IntegrationTests {
         let playlist = try await parser.parse(from: url)
 
         #expect(playlist.items.count == 22)
-        #expect(playlist.channels.count == 10)
-        #expect(playlist.movies.count == 5)
+        #expect(playlist.channels.count == 9)  // Updated: improved movie sequel detection
+        #expect(playlist.movies.count == 6)     // Updated: one item now correctly classified as movie
         #expect(playlist.series.count == 7)
     }
 

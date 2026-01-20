@@ -177,6 +177,18 @@ struct DetailedAnalysis {
 }
 
 // Entry point
+import Dispatch
+
+let semaphore = DispatchSemaphore(value: 0)
+
 Task {
-    try await DetailedAnalysis.main()
+    do {
+        try await DetailedAnalysis.main()
+    } catch {
+        print("❌ Hata: \(error)")
+    }
+    semaphore.signal()
 }
+
+semaphore.wait()
+exit(0)

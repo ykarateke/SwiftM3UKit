@@ -54,13 +54,21 @@ swift package generate-documentation --target SwiftM3UKit
 swift package --disable-sandbox preview-documentation --target SwiftM3UKit
 ```
 
-### Command-Line Tool
+### Command-Line Tools
 ```bash
 # Build the PlaylistAnalyzer tool
 swift build --product PlaylistAnalyzer
 
 # Run the analyzer
 swift run PlaylistAnalyzer <path-to-m3u-file>
+
+# Build and run SeriesDiagnostic
+swift build --product SeriesDiagnostic
+swift run SeriesDiagnostic <path-to-m3u-file>
+
+# Build and run DetailedAnalysis
+swift build --product DetailedAnalysis
+swift run DetailedAnalysis <path-to-m3u-file>
 ```
 
 ## Architecture
@@ -159,6 +167,46 @@ Sources/SwiftM3UKit/
 - `xui-id`, `timeshift` - XUI/Xtream Codes
 - `catchup`, `catchup-source`, `catchup-days`, `catchup-correction` - Time-shift TV
 - `tvg-rec` - Recording capability
+
+**Content Classification Rules:**
+
+Movie Classification (in priority order):
+1. **Group-based detection**: Group contains movie keywords (movie, film, cinema, sinema, 4k, uhd, fhd, top, imdb, best, world, classics, bollywood, marvel, dc, disney, pixar, etc.)
+2. **Sequel patterns**: Numeric sequels (Title 2-9), Part indicators (Part II, Chapter 3), Roman numerals (II-X)
+   - Overridden by live indicators (HD, FHD, 4K suffixes)
+   - Overridden by explicit series groups
+3. **[4K] tags**: Explicit quality tags in square brackets
+4. **Year patterns**: 4-digit years (1950-2030) without live indicators
+5. **Language tags**: (TR), (EN), [TR], etc. with year patterns
+
+Series Classification (in priority order):
+1. **S01E01 patterns**: Universal format (S##E##, s##e##) - highest priority, overrides group keywords
+2. **Explicit series groups**: Groups containing series keywords (series, dizi, dizileri, tv show, مسلسل, série, ドラマ, сериал, etc.) - override nonSeriesGroupKeywords
+3. **Season/Episode word patterns**: "Season X Episode Y" in 11 languages
+4. **Asian patterns**: Chinese (第X季第X集), Japanese (第X期第X話)
+5. **Episode-only patterns**: "Ep. X", "Ep X"
+6. **Group-based**: Series group without specific episode info
+
+Live TV Classification:
+- **Live prefix indicator**: ▱ symbol at start of group name (absolute priority)
+- **Live indicators**: HD, FHD, UHD, 4K, SD suffixes; HEVC, H265, H264 codecs; Unicode indicators (°, ᴿᴬᵂ, ᴴᴰ, etc.)
+- **Default**: Items not matching movie or series patterns
+
+Classification Priority:
+1. Live prefix (▱) → Live TV (absolute)
+2. Strong series patterns (S01E01) → Series (overrides all group keywords)
+3. Explicit series groups → Series (overrides nonSeriesGroupKeywords)
+4. Movie group keywords → Movie
+5. Movie sequel patterns (if no live indicators) → Movie
+6. Series detection (word patterns, episode-only, group-based) → Series
+7. [4K] tags → Movie
+8. Year patterns (without live indicators) → Movie
+9. Default → Live TV
+
+Turkish "Bölüm" Context-Aware Handling:
+- **With year + episode number**: Movie part ("John Wick: Bölüm 4 (2023)" → `.movie`)
+- **With season + episode**: Series ("Kurtlar Vadisi Sezon 1 Bölüm 5" → `.series`)
+- Context detection prevents false classification based on year presence
 
 **Quality Score Calculation:**
 - Base: 25 points

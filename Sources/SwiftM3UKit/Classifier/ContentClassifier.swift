@@ -104,7 +104,11 @@ public struct ContentClassifier: ContentClassifying, Sendable {
         // Chinese
         "电影", "影片",
         // Spanish
-        "película", "películas", "cine"
+        "película", "películas", "cine",
+        // Quality/Collection indicators
+        "4k", "fhd", "uhd", "2160p", "1080p",
+        "top", "best", "world", "classics", "collection",
+        "bollywood", "marvel", "dc", "disney", "pixar"
     ]
 
     /// Groups that should NOT be classified as series
@@ -128,7 +132,19 @@ public struct ContentClassifier: ContentClassifying, Sendable {
         // Chinese
         "电影", "纪录片",
         // Spanish
-        "película", "cine", "documental"
+        "película", "cine", "documental",
+        // Quality indicators
+        "4k", "fhd", "uhd", "hd", "2160p", "1080p", "720p",
+        "bluray", "blu-ray", "blu ray",
+        // Collection/catalog indicators
+        "world", "top", "imdb", "best", "classics", "classic",
+        "collection", "koleksiyon", "top 250",
+        // Regional/format indicators
+        "altyazili", "altyazılı", "dublaj", "yabanci", "yabancı",
+        "yerli", "türk", "turkish", "diamant",
+        // Genre indicators (movie-specific)
+        "bollywood", "marvel", "dc", "disney", "pixar",
+        "klasik", "nostalji", "yeşilçam", "yesilcam"
     ]
 
     // MARK: - Multi-Language Season/Episode Keywords
@@ -184,14 +200,20 @@ public struct ContentClassifier: ContentClassifying, Sendable {
     // MARK: - Series Detection
 
     private func detectSeries(name: String, group: String) -> (season: Int?, episode: Int?)? {
-        // First check if group explicitly excludes series classification
-        for keyword in nonSeriesGroupKeywords {
-            if group.contains(keyword) {
-                // Only S01E01 pattern can override this (very specific)
-                if let match = findSeasonEpisodePattern(in: name) {
-                    return match
+        // Check for explicit series group keywords first
+        let hasExplicitSeriesKeyword = seriesGroupKeywords.contains { group.contains($0) }
+
+        // Check if group explicitly excludes series classification
+        // But skip this check if we have an explicit series keyword
+        if !hasExplicitSeriesKeyword {
+            for keyword in nonSeriesGroupKeywords {
+                if group.contains(keyword) {
+                    // Only S01E01 pattern can override this (very specific)
+                    if let match = findSeasonEpisodePattern(in: name) {
+                        return match
+                    }
+                    return nil
                 }
-                return nil
             }
         }
 
@@ -420,6 +442,37 @@ public struct ContentClassifier: ContentClassifying, Sendable {
         return nil
     }
 
+    /// Detects movie sequel patterns like "Title 2", "Title 3", "Title: Part 2"
+    /// Returns true if the title appears to be a movie sequel/part
+    private func isMovieSequel(_ title: String) -> Bool {
+        // Pattern 1: Title + single digit (2-9) + optional year or end
+        // Matches: "Shrek 3", "Iron Man 3 (2013)", "Avatar 2", "Fast & Furious 7"
+        let singleDigitPattern = #"(?:^|\s)([2-9])(?:\s|$|\()"#
+
+        // Pattern 2: Explicit "Part" indicators (case-insensitive)
+        // Matches: "Part 2", "Part II", "Pt. 2", "Chapter 3", "Bölüm 3" (when used as Part)
+        let partPattern = #"(?i)(?:part|pt\.?|chapter)[\s:]+(?:[IVX]+|\d+)"#
+
+        // Pattern 3: Roman numerals (II-X) as sequels
+        // Matches: "Rocky II", "Rocky III", "Episode IV"
+        let romanPattern = #"(?:^|\s)(II|III|IV|V|VI|VII|VIII|IX|X)(?:\s|$|\(|:)"#
+
+        // Pattern 4: Subtitle with sequel indicator
+        // Matches: "Title 2: The Sequel", "Title 3: Revenge"
+        let subtitlePattern = #"(?:[2-9]|II|III|IV|V|VI|VII|VIII|IX|X):\s*(?:The|El|Le|Der|Das)"#
+
+        let patterns = [singleDigitPattern, partPattern, romanPattern, subtitlePattern]
+
+        for pattern in patterns {
+            if let regex = try? NSRegularExpression(pattern: pattern),
+               regex.firstMatch(in: title, range: NSRange(title.startIndex..., in: title)) != nil {
+                return true
+            }
+        }
+
+        return false
+    }
+
     // MARK: - Movie Detection
 
     private func isMovie(name: String, group: String, originalName: String) -> Bool {
@@ -428,6 +481,23 @@ public struct ContentClassifier: ContentClassifying, Sendable {
             if group.contains(keyword) {
                 return true
             }
+        }
+
+        // Check for movie sequel patterns (e.g., "Iron Man 3", "Shrek 2")
+        if isMovieSequel(originalName) {
+            // Sequel detected, check if live indicators contradict
+            if hasLiveIndicators(in: name, originalName: originalName) {
+                return false
+            }
+
+            // Check if group contradicts
+            // If group explicitly contains "series", "dizi", etc., don't override
+            let seriesIndicators = ["series", "dizi", "tv show", "episode", "مسلسل", "série", "serie",
+                                   "सीरीज़", "ドラマ", "сериал", "剧集", "telenovela"]
+            if seriesIndicators.contains(where: { group.contains($0) }) {
+                return false
+            }
+            return true
         }
 
         // Check for [4K] tag (strong movie indicator)

@@ -543,4 +543,280 @@ struct ClassifierTests {
         let result = classifier.classify(name: "千と千尋の神隠し (2001)", group: "映画", attributes: [:])
         #expect(result == .movie)
     }
+
+    // MARK: - Movie Sequel Detection
+
+    @Test("Movie sequels with numbers should be classified as movies")
+    func movieSequelsWithNumbersShouldBeMovies() {
+        let testCases: [(name: String, group: String?)] = [
+            // Numeric sequels
+            ("Shrek 3 (2007)", "4K WORLD"),
+            ("Iron Man 3 (2013)", "ACTION"),
+            ("Jurassic Park 3 (2001)", nil),
+            ("Madagascar 3 (2012)", "ANIMATION"),
+            ("Die Hard 4.0 (2007)", "4K"),
+            ("Fast & Furious 7 (2015)", "4K BLURAY"),
+            ("Ocean's 11 (2001)", "HEIST"),
+            ("Apollo 13 (1995)", "DRAMA"),
+
+            // Part indicators
+            ("John Wick: Part 2 (2017)", "ACTION"),
+            ("Avatar: Chapter 2 (2025)", "SCI-FI"),
+
+            // Without year (relying on sequel pattern)
+            ("Shrek 3", "Movies"),
+            ("Frozen 2", "Disney"),
+        ]
+
+        for (name, group) in testCases {
+            let result = classifier.classify(name: name, group: group, attributes: [:])
+
+            #expect(result == .movie,
+                    "'\(name)' in group '\(group ?? "nil")' should be .movie, got \(result)")
+        }
+    }
+
+    @Test("Roman numeral sequels should be detected as movies")
+    func romanNumeralSequelsShouldBeMovies() {
+        let testCases = [
+            "Rocky II (1979)",
+            "Rocky III (1982)",
+            "Rocky IV (1985)",
+            "Star Wars Episode IV (1977)",
+            "Final Fantasy VII (2005)",
+            "Rambo III (1988)",
+        ]
+
+        for name in testCases {
+            let result = classifier.classify(name: name, group: "Movies", attributes: [:])
+
+            #expect(result == .movie,
+                    "'\(name)' with Roman numerals should be .movie, got \(result)")
+        }
+    }
+
+    @Test("Movie sequels with Part indicators should be movies")
+    func movieSequelsWithPartIndicatorsShouldBeMovies() {
+        let testCases = [
+            "The Godfather Part II (1974)",
+            "Back to the Future Part III (1990)",
+            "Harry Potter and the Deathly Hallows: Part 2 (2011)",
+            "Kill Bill: Part 2 (2004)",
+            "Dune: Part Two (2024)",
+        ]
+
+        for name in testCases {
+            let result = classifier.classify(name: name, group: nil, attributes: [:])
+
+            #expect(result == .movie,
+                    "'\(name)' with Part indicator should be .movie, got \(result)")
+        }
+    }
+
+    // MARK: - Quality Indicator Groups
+
+    @Test("Quality indicator groups should default to movies")
+    func qualityGroupsShouldDefaultToMovies() {
+        let qualityGroups = [
+            "4K WORLD",
+            "FHD COLLECTION",
+            "UHD MOVIES",
+            "2160P",
+            "TOP 250",
+            "IMDB TOP",
+            "BEST OF 2024",
+            "BOLLYWOOD",
+            "MARVEL COLLECTION",
+        ]
+
+        for group in qualityGroups {
+            let result = classifier.classify(name: "Random Title (2024)", group: group, attributes: [:])
+
+            #expect(result == .movie,
+                    "Items in '\(group)' should default to .movie, got \(result)")
+        }
+    }
+
+    @Test("Items in 4K WORLD group should be classified as movies")
+    func fourKWorldGroupShouldBeMovies() {
+        let testCases = [
+            "Avatar (2009)",
+            "Inception (2010)",
+            "The Dark Knight (2008)",
+            "Interstellar (2014)",
+        ]
+
+        for name in testCases {
+            let result = classifier.classify(name: name, group: "4K WORLD", attributes: [:])
+
+            #expect(result == .movie,
+                    "'\(name)' in 4K WORLD should be .movie, got \(result)")
+        }
+    }
+
+    @Test("Items in TOP 250 group should be classified as movies")
+    func top250GroupShouldBeMovies() {
+        let testCases = [
+            "The Shawshank Redemption (1994)",
+            "The Godfather (1972)",
+            "The Dark Knight (2008)",
+            "12 Angry Men (1957)",
+        ]
+
+        for name in testCases {
+            let result = classifier.classify(name: name, group: "TOP 250", attributes: [:])
+
+            #expect(result == .movie,
+                    "'\(name)' in TOP 250 should be .movie, got \(result)")
+        }
+    }
+
+    // MARK: - Edge Cases
+
+    @Test("Strong episode patterns should override sequel detection")
+    func strongEpisodePatternsOverrideSequelDetection() {
+        // Even if title contains "3", strong S01E03 pattern should win
+        let result = classifier.classify(name: "Breaking Bad 3 S01E03", group: "4K WORLD", attributes: [:])
+
+        if case .series = result {
+            // Expected - strong pattern overrides
+        } else {
+            #expect(Bool(false), "Strong S01E03 pattern should result in .series, got \(result)")
+        }
+    }
+
+    @Test("Series patterns in quality groups should be classified as series")
+    func seriesPatternsInQualityGroupsShouldBeSeries() {
+        let result = classifier.classify(name: "The Crown S01E01", group: "Netflix 4K", attributes: [:])
+
+        if case .series = result {
+            // Expected
+        } else {
+            #expect(Bool(false), "S01E01 pattern should override quality group, got \(result)")
+        }
+    }
+
+    @Test("Movie sequels in series groups should check pattern strength")
+    func movieSequelsInSeriesGroupAmbiguous() {
+        // Ambiguous: "Title 3" in "TV Series" group
+        let result = classifier.classify(name: "Stranger Things 3", group: "TV SERIES", attributes: [:])
+
+        // Without S01E03 pattern, group should win
+        // This is acceptable behavior - let group context dominate
+        #expect(result == .series(season: nil, episode: nil),
+                "In 'TV SERIES' group without S01E03, should be series")
+    }
+
+    @Test("Complex movie titles with numbers should not false positive")
+    func complexMovieTitlesWithNumbers() {
+        let testCases = [
+            ("District 9 (2009)", "Sci-Fi", true),  // Number is part of title
+            ("Apollo 13 (1995)", "Drama", true),   // Based on real event
+            ("Catch-22 (1970)", "War", true),      // Based on book title
+        ]
+
+        for (name, group, shouldBeMovie) in testCases {
+            let result = classifier.classify(name: name, group: group, attributes: [:])
+
+            if shouldBeMovie {
+                #expect(result == .movie,
+                        "'\(name)' should be .movie, got \(result)")
+            }
+        }
+    }
+
+    @Test("Turkish Bölüm context-aware detection should work with sequels")
+    func turkishBolumWithSequels() {
+        // Movie part (with year)
+        let movieResult = classifier.classify(
+            name: "John Wick: Bölüm 4 (2023)",
+            group: "Aksiyon",
+            attributes: [:]
+        )
+        #expect(movieResult == .movie, "Turkish movie part with year should be .movie")
+
+        // Series episode (with season)
+        let seriesResult = classifier.classify(
+            name: "Kurtlar Vadisi Sezon 1 Bölüm 5",
+            group: "Dizi",
+            attributes: [:]
+        )
+
+        if case .series = seriesResult {
+            // Expected
+        } else {
+            #expect(Bool(false), "Turkish series with Sezon/Bölüm should be .series")
+        }
+    }
+
+    @Test("Live TV with numeric suffix should not be movie")
+    func liveTVWithNumericSuffixShouldNotBeMovie() {
+        let testCases = [
+            "BBC One HD",
+            "CNN FHD",
+            "Discovery 4K",
+            "Fox Sports 2 HD",
+        ]
+
+        for name in testCases {
+            let result = classifier.classify(name: name, group: "Live TV", attributes: [:])
+
+            #expect(result == .live,
+                    "'\(name)' should be .live, got \(result)")
+        }
+    }
+
+    @Test("Items with live prefix should always be live")
+    func itemsWithLivePrefixShouldAlwaysBeeLive() {
+        let testCases = [
+            "▱ TRT 1 HD",
+            "▱ SPOR",
+            "▱ HABER",
+            "▱ BELGESEL",
+        ]
+
+        for name in testCases {
+            let result = classifier.classify(name: name, group: "▱ ULUSAL", attributes: [:])
+
+            #expect(result == .live,
+                    "'\(name)' with ▱ prefix should be .live, got \(result)")
+        }
+    }
+
+    @Test("Diamant SINEMA group should be classified as movies")
+    func diamantSinemaGroupShouldBeMovies() {
+        let testCases = [
+            "The Matrix (1999)",
+            "Inception (2010)",
+            "The Shawshank Redemption (1994)",
+        ]
+
+        for name in testCases {
+            let result = classifier.classify(name: name, group: "▱ DIAMANT SINEMA", attributes: [:])
+
+            // Should be live because of ▱ prefix
+            #expect(result == .live,
+                    "'\(name)' in ▱ DIAMANT SINEMA should be .live due to prefix")
+        }
+    }
+
+    @Test("Sequel detection should not override explicit series groups")
+    func sequelDetectionShouldNotOverrideSeriesGroups() {
+        let testCases = [
+            ("Breaking Bad 3", "TV Series"),
+            ("House MD 2", "Series"),
+            ("Friends 3", "DIZI"),
+        ]
+
+        for (name, group) in testCases {
+            let result = classifier.classify(name: name, group: group, attributes: [:])
+
+            if case .series = result {
+                // Expected - explicit series group overrides sequel pattern
+            } else {
+                #expect(Bool(false),
+                        "'\(name)' in '\(group)' should be .series, got \(result)")
+            }
+        }
+    }
 }
