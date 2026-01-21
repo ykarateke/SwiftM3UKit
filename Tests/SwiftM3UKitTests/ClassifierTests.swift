@@ -10,25 +10,25 @@ struct ClassifierTests {
 
     @Test("Classify live channel with HD suffix")
     func classifyLiveHD() {
-        let result = classifier.classify(name: "BBC One HD", group: "UK Channels", attributes: [:])
+        let result = classifier.classify(name:"BBC One HD", group: "UK Channels", attributes: [:], url: nil)
         #expect(result == .live)
     }
 
     @Test("Classify live channel with 4K suffix")
     func classifyLive4K() {
-        let result = classifier.classify(name: "Discovery 4K", group: "Documentary", attributes: [:])
+        let result = classifier.classify(name:"Discovery 4K", group: "Documentary", attributes: [:], url: nil)
         #expect(result == .live)
     }
 
     @Test("Classify live channel with FHD suffix")
     func classifyLiveFHD() {
-        let result = classifier.classify(name: "CNN FHD", group: "News", attributes: [:])
+        let result = classifier.classify(name:"CNN FHD", group: "News", attributes: [:], url: nil)
         #expect(result == .live)
     }
 
     @Test("Classify plain channel as live")
     func classifyPlainChannel() {
-        let result = classifier.classify(name: "Local Channel", group: "Regional", attributes: [:])
+        let result = classifier.classify(name:"Local Channel", group: "Regional", attributes: [:], url: nil)
         #expect(result == .live)
     }
 
@@ -36,31 +36,31 @@ struct ClassifierTests {
 
     @Test("Classify movie with year pattern")
     func classifyMovieWithYear() {
-        let result = classifier.classify(name: "The Matrix (1999)", group: "Movies", attributes: [:])
+        let result = classifier.classify(name:"The Matrix (1999)", group: "Movies", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     @Test("Classify movie with movie group")
     func classifyMovieWithGroup() {
-        let result = classifier.classify(name: "Some Film", group: "Movies", attributes: [:])
+        let result = classifier.classify(name:"Some Film", group: "Movies", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     @Test("Classify movie with VOD group")
     func classifyMovieWithVODGroup() {
-        let result = classifier.classify(name: "Action Film", group: "VOD", attributes: [:])
+        let result = classifier.classify(name:"Action Film", group: "VOD", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     @Test("Classify movie with film group")
     func classifyMovieWithFilmGroup() {
-        let result = classifier.classify(name: "Drama", group: "Film", attributes: [:])
+        let result = classifier.classify(name:"Drama", group: "Film", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     @Test("Classify movie with year and language tag")
     func classifyMovieWithYearAndLanguage() {
-        let result = classifier.classify(name: "Inception (2010) (TR)", group: nil, attributes: [:])
+        let result = classifier.classify(name:"Inception (2010) (TR)", group: nil, attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
@@ -68,7 +68,7 @@ struct ClassifierTests {
 
     @Test("Classify series with S01E01 pattern")
     func classifySeriesS01E01() {
-        let result = classifier.classify(name: "Breaking Bad S01E01", group: "Series", attributes: [:])
+        let result = classifier.classify(name:"Breaking Bad S01E01", group: "Series", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 1)
@@ -80,7 +80,7 @@ struct ClassifierTests {
 
     @Test("Classify series with S1E1 pattern")
     func classifySeriesS1E1() {
-        let result = classifier.classify(name: "Game of Thrones S1E1", group: nil, attributes: [:])
+        let result = classifier.classify(name:"Game of Thrones S1E1", group: nil, attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 1)
@@ -92,7 +92,7 @@ struct ClassifierTests {
 
     @Test("Classify series with Season/Episode words")
     func classifySeriesSeasonEpisode() {
-        let result = classifier.classify(name: "Friends Season 2 Episode 10", group: nil, attributes: [:])
+        let result = classifier.classify(name:"Friends Season 2 Episode 10", group: nil, attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 2)
@@ -104,7 +104,7 @@ struct ClassifierTests {
 
     @Test("Classify series with Turkish Sezon/Bölüm")
     func classifySeriesTurkish() {
-        let result = classifier.classify(name: "Kurtlar Vadisi Sezon 1 Bölüm 5", group: nil, attributes: [:])
+        let result = classifier.classify(name:"Kurtlar Vadisi Sezon 1 Bölüm 5", group: nil, attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 1)
@@ -116,7 +116,7 @@ struct ClassifierTests {
 
     @Test("Classify series with episode only")
     func classifySeriesEpisodeOnly() {
-        let result = classifier.classify(name: "Documentary Ep. 5", group: nil, attributes: [:])
+        let result = classifier.classify(name:"Documentary Ep. 5", group: nil, attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == nil)
@@ -128,7 +128,7 @@ struct ClassifierTests {
 
     @Test("Classify series with lowercase pattern")
     func classifySeriesLowercase() {
-        let result = classifier.classify(name: "the wire s03e05", group: nil, attributes: [:])
+        let result = classifier.classify(name:"the wire s03e05", group: nil, attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 3)
@@ -143,19 +143,19 @@ struct ClassifierTests {
     @Test("Year in live channel doesn't make it movie")
     func yearInLiveChannel() {
         // When HD indicator is present, should be live even with year
-        let result = classifier.classify(name: "Sports 2024 HD", group: "Sports", attributes: [:])
+        let result = classifier.classify(name:"Sports 2024 HD", group: "Sports", attributes: [:], url: nil)
         #expect(result == .live)
     }
 
     @Test("Empty name defaults to live")
     func emptyName() {
-        let result = classifier.classify(name: "", group: nil, attributes: [:])
+        let result = classifier.classify(name:"", group: nil, attributes: [:], url: nil)
         #expect(result == .live)
     }
 
     @Test("Cinema group indicates movie", arguments: ["Cinema", "cinema", "CINEMA"])
     func cinemaGroup(group: String) {
-        let result = classifier.classify(name: "Some Title", group: group, attributes: [:])
+        let result = classifier.classify(name:"Some Title", group: group, attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
@@ -163,19 +163,19 @@ struct ClassifierTests {
 
     @Test("Classify movie with Turkish sinema group")
     func classifyMovieWithSinema() {
-        let result = classifier.classify(name: "Film Adı", group: "Sinema", attributes: [:])
+        let result = classifier.classify(name:"Film Adı", group: "Sinema", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     @Test("Classify movie with vizyon group")
     func classifyMovieWithVizyon() {
-        let result = classifier.classify(name: "Yeni Film", group: "Vizyon Filmleri", attributes: [:])
+        let result = classifier.classify(name:"Yeni Film", group: "Vizyon Filmleri", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     @Test("Classify movie with bluray group")
     func classifyMovieWithBluray() {
-        let result = classifier.classify(name: "Action Movie", group: "Bluray Films", attributes: [:])
+        let result = classifier.classify(name:"Action Movie", group: "Bluray Films", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
@@ -185,16 +185,16 @@ struct ClassifierTests {
     func classifyMovieWithBolumAndYear() {
         // Turkish "Bölüm" can mean both "Part" (movie) and "Episode" (series)
         // When there's a year and no season, it's a movie part
-        let result = classifier.classify(name: "John Wick: Bölüm 4 (2023)", group: "Filmler", attributes: [:])
+        let result = classifier.classify(name:"John Wick: Bölüm 4 (2023)", group: "Filmler", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     @Test("Classify movie with Turkish Bölüm and quality tags")
     func classifyMovieWithBolumQualityTags() {
         // Quality variants of the same movie part should all be classified as movies
-        let resultHD = classifier.classify(name: "John Wick: Bölüm 4 - HD (2023)", group: "Dublaj Filmler", attributes: [:])
-        let resultFHD = classifier.classify(name: "John Wick: Bölüm 4 - FHD (2023)", group: "Dublaj Filmler", attributes: [:])
-        let result4K = classifier.classify(name: "John Wick: Bölüm 4 - 4K (2023)", group: "Dublaj Filmler", attributes: [:])
+        let resultHD = classifier.classify(name:"John Wick: Bölüm 4 - HD (2023)", group: "Dublaj Filmler", attributes: [:], url: nil)
+        let resultFHD = classifier.classify(name:"John Wick: Bölüm 4 - FHD (2023)", group: "Dublaj Filmler", attributes: [:], url: nil)
+        let result4K = classifier.classify(name:"John Wick: Bölüm 4 - 4K (2023)", group: "Dublaj Filmler", attributes: [:], url: nil)
 
         #expect(resultHD == .movie)
         #expect(resultFHD == .movie)
@@ -204,8 +204,8 @@ struct ClassifierTests {
     @Test("Classify movie with Bölüm in Turkish title")
     func classifyMovieWithBolumInTitle() {
         // More Turkish movie examples with "Bölüm" meaning "Part"
-        let result1 = classifier.classify(name: "Dune: Çöl Gezegeni Bölüm İki (2024)", group: "Yabancı Filmler", attributes: [:])
-        let result2 = classifier.classify(name: "Harry Potter ve Ölüm Yadigârları: Bölüm 2 (2011)", group: "Yabancı Seri Filmler", attributes: [:])
+        let result1 = classifier.classify(name:"Dune: Çöl Gezegeni Bölüm İki (2024)", group: "Yabancı Filmler", attributes: [:], url: nil)
+        let result2 = classifier.classify(name:"Harry Potter ve Ölüm Yadigârları: Bölüm 2 (2011)", group: "Yabancı Seri Filmler", attributes: [:], url: nil)
 
         #expect(result1 == .movie)
         #expect(result2 == .movie)
@@ -214,7 +214,7 @@ struct ClassifierTests {
     @Test("Classify series with Turkish Bölüm (Episode) and season")
     func classifySeriesWithBolumAndSeason() {
         // When "Bölüm" appears WITH a season number, it's a series episode
-        let result = classifier.classify(name: "Kurtlar Vadisi Sezon 1 Bölüm 4", group: "Diziler", attributes: [:])
+        let result = classifier.classify(name:"Kurtlar Vadisi Sezon 1 Bölüm 4", group: "Diziler", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 1)
@@ -227,7 +227,7 @@ struct ClassifierTests {
     @Test("Classify series with Turkish Bölüm and S##E## pattern")
     func classifySeriesWithBolumAndPattern() {
         // When "Bölüm" appears with S##E## pattern, it's definitely a series
-        let result = classifier.classify(name: "Eşref Rüya S02E14 Bölüm 14", group: "Güncel TV Dizileri", attributes: [:])
+        let result = classifier.classify(name:"Eşref Rüya S02E14 Bölüm 14", group: "Güncel TV Dizileri", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 2)
@@ -240,7 +240,7 @@ struct ClassifierTests {
     @Test("Classify series with only Bölüm in series group")
     func classifySeriesWithBolumInSeriesGroup() {
         // When in a series group without year, "Bölüm" means episode
-        let result = classifier.classify(name: "Show Name Bölüm 5", group: "TV Dizileri", attributes: [:])
+        let result = classifier.classify(name:"Show Name Bölüm 5", group: "TV Dizileri", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == nil)
@@ -252,25 +252,25 @@ struct ClassifierTests {
 
     @Test("Classify movie with altyazili group")
     func classifyMovieWithAltyazili() {
-        let result = classifier.classify(name: "Foreign Film", group: "Altyazılı Filmler", attributes: [:])
+        let result = classifier.classify(name:"Foreign Film", group: "Altyazılı Filmler", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     @Test("Classify movie with dublaj group")
     func classifyMovieWithDublaj() {
-        let result = classifier.classify(name: "Kids Movie", group: "Dublaj Filmler", attributes: [:])
+        let result = classifier.classify(name:"Kids Movie", group: "Dublaj Filmler", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     @Test("Classify movie with imdb group")
     func classifyMovieWithIMDB() {
-        let result = classifier.classify(name: "Top Rated", group: "IMDB Top 250", attributes: [:])
+        let result = classifier.classify(name:"Top Rated", group: "IMDB Top 250", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     @Test("Classify movie with [4K] tag")
     func classifyMovieWith4KTag() {
-        let result = classifier.classify(name: "Inception [4K]", group: nil, attributes: [:])
+        let result = classifier.classify(name:"Inception [4K]", group: nil, attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
@@ -279,7 +279,7 @@ struct ClassifierTests {
     @Test("Classify series with Netflix Dizileri group")
     func classifySeriesNetflix() {
         // "Netflix Dizileri" contains "dizi" so it's a series group
-        let result = classifier.classify(name: "Stranger Things", group: "Netflix Dizileri", attributes: [:])
+        let result = classifier.classify(name:"Stranger Things", group: "Netflix Dizileri", attributes: [:], url: nil)
 
         if case .series = result {
             // Pass
@@ -291,7 +291,7 @@ struct ClassifierTests {
     @Test("Classify series with Disney Dizileri group")
     func classifySeriesDisney() {
         // Groups must contain "dizi" or "series" keyword
-        let result = classifier.classify(name: "The Mandalorian", group: "Disney Plus Dizileri", attributes: [:])
+        let result = classifier.classify(name:"The Mandalorian", group: "Disney Plus Dizileri", attributes: [:], url: nil)
 
         if case .series = result {
             // Pass
@@ -302,7 +302,7 @@ struct ClassifierTests {
 
     @Test("Classify series with Amazon Dizileri group")
     func classifySeriesAmazon() {
-        let result = classifier.classify(name: "The Boys", group: "Amazon Dizileri", attributes: [:])
+        let result = classifier.classify(name:"The Boys", group: "Amazon Dizileri", attributes: [:], url: nil)
 
         if case .series = result {
             // Pass
@@ -314,7 +314,7 @@ struct ClassifierTests {
     @Test("Classify series with explicit dizi keyword")
     func classifySeriesExxen() {
         // Exxen alone is not enough - need "dizi" keyword
-        let result = classifier.classify(name: "Türk Dizisi", group: "Exxen Dizileri", attributes: [:])
+        let result = classifier.classify(name:"Türk Dizisi", group: "Exxen Dizileri", attributes: [:], url: nil)
 
         if case .series = result {
             // Pass
@@ -325,7 +325,7 @@ struct ClassifierTests {
 
     @Test("Classify series with BluTV Dizileri group")
     func classifySeriesBluTV() {
-        let result = classifier.classify(name: "Yeşilçam", group: "BluTV Dizileri", attributes: [:])
+        let result = classifier.classify(name:"Yeşilçam", group: "BluTV Dizileri", attributes: [:], url: nil)
 
         if case .series = result {
             // Pass
@@ -336,7 +336,7 @@ struct ClassifierTests {
 
     @Test("Classify series with explicit diziler keyword")
     func classifySeriesTabii() {
-        let result = classifier.classify(name: "Dizi Adı", group: "Tabii Diziler", attributes: [:])
+        let result = classifier.classify(name:"Dizi Adı", group: "Tabii Diziler", attributes: [:], url: nil)
 
         if case .series = result {
             // Pass
@@ -349,32 +349,32 @@ struct ClassifierTests {
 
     @Test("Live channel with AVRUPA unicode indicator")
     func classifyLiveWithAvrupa() {
-        let result = classifier.classify(name: "Kanal D ᴬⱽᴿᵁᴾᴬ", group: "Ulusal", attributes: [:])
+        let result = classifier.classify(name:"Kanal D ᴬⱽᴿᵁᴾᴬ", group: "Ulusal", attributes: [:], url: nil)
         #expect(result == .live)
     }
 
     @Test("Live channel with RAW unicode indicator")
     func classifyLiveWithRaw() {
-        let result = classifier.classify(name: "TRT 1 ᴿᴬᵂ", group: "Ulusal", attributes: [:])
+        let result = classifier.classify(name:"TRT 1 ᴿᴬᵂ", group: "Ulusal", attributes: [:], url: nil)
         #expect(result == .live)
     }
 
     @Test("Live channel with degree symbol")
     func classifyLiveWithDegree() {
-        let result = classifier.classify(name: "Show TV °", group: "Ulusal", attributes: [:])
+        let result = classifier.classify(name:"Show TV °", group: "Ulusal", attributes: [:], url: nil)
         #expect(result == .live)
     }
 
     @Test("Live channel with UHD unicode indicator")
     func classifyLiveWithUHD() {
-        let result = classifier.classify(name: "Filmbox ᵁᴴᴰ", group: "Sinema", attributes: [:])
+        let result = classifier.classify(name:"Filmbox ᵁᴴᴰ", group: "Sinema", attributes: [:], url: nil)
         // This is in Sinema group, but has UHD indicator - should still be movie due to group
         #expect(result == .movie)
     }
 
     @Test("Live channel with superscript HD indicator")
     func classifyLiveWithSuperscriptHD() {
-        let result = classifier.classify(name: "beIN Sports ᴴᴰ", group: "Spor", attributes: [:])
+        let result = classifier.classify(name:"beIN Sports ᴴᴰ", group: "Spor", attributes: [:], url: nil)
         #expect(result == .live)
     }
 
@@ -383,7 +383,7 @@ struct ClassifierTests {
     // 🇫🇷 French
     @Test("Classify series with French Saison/Épisode")
     func classifySeriesFrench() {
-        let result = classifier.classify(name: "Les Revenants Saison 1 Épisode 5", group: "Série", attributes: [:])
+        let result = classifier.classify(name:"Les Revenants Saison 1 Épisode 5", group: "Série", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 1)
@@ -395,14 +395,14 @@ struct ClassifierTests {
 
     @Test("Classify movie with French Cinéma group")
     func classifyMovieFrench() {
-        let result = classifier.classify(name: "Amélie Poulain (2001)", group: "Cinéma", attributes: [:])
+        let result = classifier.classify(name:"Amélie Poulain (2001)", group: "Cinéma", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     // 🇩🇪 German
     @Test("Classify series with German Staffel/Folge")
     func classifySeriesGerman() {
-        let result = classifier.classify(name: "Dark Staffel 2 Folge 8", group: "Serie", attributes: [:])
+        let result = classifier.classify(name:"Dark Staffel 2 Folge 8", group: "Serie", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 2)
@@ -414,14 +414,14 @@ struct ClassifierTests {
 
     @Test("Classify movie with German Kino group")
     func classifyMovieGerman() {
-        let result = classifier.classify(name: "Das Boot (1981)", group: "Kino", attributes: [:])
+        let result = classifier.classify(name:"Das Boot (1981)", group: "Kino", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     // 🇪🇸 Spanish
     @Test("Classify series with Spanish Temporada/Episodio")
     func classifySeriesSpanish() {
-        let result = classifier.classify(name: "La Casa de Papel Temporada 3 Episodio 4", group: "Series", attributes: [:])
+        let result = classifier.classify(name:"La Casa de Papel Temporada 3 Episodio 4", group: "Series", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 3)
@@ -433,7 +433,7 @@ struct ClassifierTests {
 
     @Test("Classify series with Spanish Capítulo")
     func classifySeriesSpanishCapitulo() {
-        let result = classifier.classify(name: "Elite Temporada 1 Capítulo 6", group: "Series", attributes: [:])
+        let result = classifier.classify(name:"Elite Temporada 1 Capítulo 6", group: "Series", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 1)
@@ -445,14 +445,14 @@ struct ClassifierTests {
 
     @Test("Classify movie with Spanish Película group")
     func classifyMovieSpanish() {
-        let result = classifier.classify(name: "Pan's Labyrinth (2006)", group: "Películas", attributes: [:])
+        let result = classifier.classify(name:"Pan's Labyrinth (2006)", group: "Películas", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     // 🇧🇷 Portuguese
     @Test("Classify series with Portuguese Temporada/Episódio")
     func classifySeriesPortuguese() {
-        let result = classifier.classify(name: "3% Temporada 2 Episódio 7", group: "Série", attributes: [:])
+        let result = classifier.classify(name:"3% Temporada 2 Episódio 7", group: "Série", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 2)
@@ -464,14 +464,14 @@ struct ClassifierTests {
 
     @Test("Classify movie with Portuguese Filme group")
     func classifyMoviePortuguese() {
-        let result = classifier.classify(name: "Cidade de Deus (2002)", group: "Filmes", attributes: [:])
+        let result = classifier.classify(name:"Cidade de Deus (2002)", group: "Filmes", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     // 🇷🇺 Russian
     @Test("Classify series with Russian Сезон/Серия")
     func classifySeriesRussian() {
-        let result = classifier.classify(name: "Мажор Сезон 2 Серия 10", group: "Сериал", attributes: [:])
+        let result = classifier.classify(name:"Мажор Сезон 2 Серия 10", group: "Сериал", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 2)
@@ -483,14 +483,14 @@ struct ClassifierTests {
 
     @Test("Classify movie with Russian Фильм group")
     func classifyMovieRussian() {
-        let result = classifier.classify(name: "Брат (1997)", group: "Фильмы", attributes: [:])
+        let result = classifier.classify(name:"Брат (1997)", group: "Фильмы", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     // 🇸🇦 Arabic
     @Test("Classify series with Arabic موسم/حلقة")
     func classifySeriesArabic() {
-        let result = classifier.classify(name: "مسلسل عربي موسم 1 حلقة 15", group: "مسلسلات", attributes: [:])
+        let result = classifier.classify(name:"مسلسل عربي موسم 1 حلقة 15", group: "مسلسلات", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 1)
@@ -502,14 +502,14 @@ struct ClassifierTests {
 
     @Test("Classify movie with Arabic فيلم group")
     func classifyMovieArabic() {
-        let result = classifier.classify(name: "فيلم عربي (2020)", group: "أفلام", attributes: [:])
+        let result = classifier.classify(name:"فيلم عربي (2020)", group: "أفلام", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     // 🇨🇳 Chinese
     @Test("Classify series with Chinese 第X季第X集")
     func classifySeriesChinese() {
-        let result = classifier.classify(name: "三体 第1季第5集", group: "剧集", attributes: [:])
+        let result = classifier.classify(name:"三体 第1季第5集", group: "剧集", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 1)
@@ -521,14 +521,14 @@ struct ClassifierTests {
 
     @Test("Classify movie with Chinese 电影 group")
     func classifyMovieChinese() {
-        let result = classifier.classify(name: "霸王别姬 (1993)", group: "电影", attributes: [:])
+        let result = classifier.classify(name:"霸王别姬 (1993)", group: "电影", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
     // 🇯🇵 Japanese
     @Test("Classify series with Japanese 第X話")
     func classifySeriesJapanese() {
-        let result = classifier.classify(name: "進撃の巨人 第2期第12話", group: "ドラマ", attributes: [:])
+        let result = classifier.classify(name:"進撃の巨人 第2期第12話", group: "ドラマ", attributes: [:], url: nil)
 
         if case let .series(season, episode) = result {
             #expect(season == 2)
@@ -540,7 +540,7 @@ struct ClassifierTests {
 
     @Test("Classify movie with Japanese 映画 group")
     func classifyMovieJapanese() {
-        let result = classifier.classify(name: "千と千尋の神隠し (2001)", group: "映画", attributes: [:])
+        let result = classifier.classify(name:"千と千尋の神隠し (2001)", group: "映画", attributes: [:], url: nil)
         #expect(result == .movie)
     }
 
@@ -569,7 +569,7 @@ struct ClassifierTests {
         ]
 
         for (name, group) in testCases {
-            let result = classifier.classify(name: name, group: group, attributes: [:])
+            let result = classifier.classify(name:name, group: group, attributes: [:], url: nil)
 
             #expect(result == .movie,
                     "'\(name)' in group '\(group ?? "nil")' should be .movie, got \(result)")
@@ -588,7 +588,7 @@ struct ClassifierTests {
         ]
 
         for name in testCases {
-            let result = classifier.classify(name: name, group: "Movies", attributes: [:])
+            let result = classifier.classify(name:name, group: "Movies", attributes: [:], url: nil)
 
             #expect(result == .movie,
                     "'\(name)' with Roman numerals should be .movie, got \(result)")
@@ -606,7 +606,7 @@ struct ClassifierTests {
         ]
 
         for name in testCases {
-            let result = classifier.classify(name: name, group: nil, attributes: [:])
+            let result = classifier.classify(name:name, group: nil, attributes: [:], url: nil)
 
             #expect(result == .movie,
                     "'\(name)' with Part indicator should be .movie, got \(result)")
@@ -630,7 +630,7 @@ struct ClassifierTests {
         ]
 
         for group in qualityGroups {
-            let result = classifier.classify(name: "Random Title (2024)", group: group, attributes: [:])
+            let result = classifier.classify(name:"Random Title (2024)", group: group, attributes: [:], url: nil)
 
             #expect(result == .movie,
                     "Items in '\(group)' should default to .movie, got \(result)")
@@ -647,7 +647,7 @@ struct ClassifierTests {
         ]
 
         for name in testCases {
-            let result = classifier.classify(name: name, group: "4K WORLD", attributes: [:])
+            let result = classifier.classify(name:name, group: "4K WORLD", attributes: [:], url: nil)
 
             #expect(result == .movie,
                     "'\(name)' in 4K WORLD should be .movie, got \(result)")
@@ -664,11 +664,69 @@ struct ClassifierTests {
         ]
 
         for name in testCases {
-            let result = classifier.classify(name: name, group: "TOP 250", attributes: [:])
+            let result = classifier.classify(name:name, group: "TOP 250", attributes: [:], url: nil)
 
             #expect(result == .movie,
                     "'\(name)' in TOP 250 should be .movie, got \(result)")
         }
+    }
+
+    @Test("Group names should be matched case-insensitively")
+    func groupKeywordsCaseInsensitive() {
+        let testCases = [
+            ("Avatar (2009)", "4K"),           // Uppercase
+            ("Inception (2010)", "4k"),        // Lowercase
+            ("Interstellar", "4K WORLD"),      // Mixed
+            ("The Matrix", "SINEMA"),          // Turkish uppercase
+            ("Shrek 3", "Sinema"),             // Turkish titlecase
+        ]
+
+        for (name, group) in testCases {
+            let result = classifier.classify(name:name, group: group, attributes: [:], url: nil)
+            #expect(result == .movie,
+                    "'\(name)' in '\(group)' should be .movie (case-insensitive), got \(result)")
+        }
+    }
+
+    @Test("Turkish genre groups should classify as movies")
+    func turkishGenreGroupsShouldBeMovies() {
+        let testCases = [
+            ("The Shadow's Edge (2025)", "AKSiYON & MACERA & GiZEM"),
+            ("Good Fortune (2025)", "KOMEDi & ROMANTiK"),
+            ("Inception (2010)", "DRAM"),
+            ("The Conjuring (2013)", "KORKU"),
+            ("Interstellar (2014)", "BiLiM KURGU"),
+            ("Frozen (2013)", "ANiMASYON & AiLE"),
+        ]
+
+        for (name, group) in testCases {
+            let result = classifier.classify(name:name, group: group, attributes: [:], url: nil)
+            #expect(result == .movie,
+                    "'\(name)' in '\(group)' should be .movie, got \(result)")
+        }
+    }
+
+    @Test("URLs with .mkv extension should classify as movies")
+    func mkvExtensionShouldBeMovie() {
+        let testCases = [
+            ("Random Title", nil, URL(string: "https://example.com/stream#.mkv")),
+            ("Another Movie", "Unknown", URL(string: "https://example.com/play#.mp4")),
+            ("Old Film", nil, URL(string: "https://example.com/vod.avi")),
+        ]
+
+        for (name, group, url) in testCases {
+            let result = classifier.classify(name:name, group: group, attributes: [:], url: url)
+            #expect(result == .movie,
+                    "'\(name)' with VOD extension should be .movie, got \(result)")
+        }
+    }
+
+    @Test("URLs with .m3u8 extension should not automatically classify as movies")
+    func m3u8ExtensionShouldNotBeMovie() {
+        let url = URL(string: "https://example.com/live.m3u8")
+        let result = classifier.classify(name:"Discovery Channel", group: nil, attributes: [:], url: url)
+
+        #expect(result == .live, "HLS live streams should be .live, got \(result)")
     }
 
     // MARK: - Edge Cases
@@ -676,7 +734,7 @@ struct ClassifierTests {
     @Test("Strong episode patterns should override sequel detection")
     func strongEpisodePatternsOverrideSequelDetection() {
         // Even if title contains "3", strong S01E03 pattern should win
-        let result = classifier.classify(name: "Breaking Bad 3 S01E03", group: "4K WORLD", attributes: [:])
+        let result = classifier.classify(name:"Breaking Bad 3 S01E03", group: "4K WORLD", attributes: [:], url: nil)
 
         if case .series = result {
             // Expected - strong pattern overrides
@@ -687,7 +745,7 @@ struct ClassifierTests {
 
     @Test("Series patterns in quality groups should be classified as series")
     func seriesPatternsInQualityGroupsShouldBeSeries() {
-        let result = classifier.classify(name: "The Crown S01E01", group: "Netflix 4K", attributes: [:])
+        let result = classifier.classify(name:"The Crown S01E01", group: "Netflix 4K", attributes: [:], url: nil)
 
         if case .series = result {
             // Expected
@@ -699,7 +757,7 @@ struct ClassifierTests {
     @Test("Movie sequels in series groups should check pattern strength")
     func movieSequelsInSeriesGroupAmbiguous() {
         // Ambiguous: "Title 3" in "TV Series" group
-        let result = classifier.classify(name: "Stranger Things 3", group: "TV SERIES", attributes: [:])
+        let result = classifier.classify(name:"Stranger Things 3", group: "TV SERIES", attributes: [:], url: nil)
 
         // Without S01E03 pattern, group should win
         // This is acceptable behavior - let group context dominate
@@ -716,7 +774,7 @@ struct ClassifierTests {
         ]
 
         for (name, group, shouldBeMovie) in testCases {
-            let result = classifier.classify(name: name, group: group, attributes: [:])
+            let result = classifier.classify(name:name, group: group, attributes: [:], url: nil)
 
             if shouldBeMovie {
                 #expect(result == .movie,
@@ -731,7 +789,8 @@ struct ClassifierTests {
         let movieResult = classifier.classify(
             name: "John Wick: Bölüm 4 (2023)",
             group: "Aksiyon",
-            attributes: [:]
+            attributes: [:],
+            url: nil
         )
         #expect(movieResult == .movie, "Turkish movie part with year should be .movie")
 
@@ -739,7 +798,8 @@ struct ClassifierTests {
         let seriesResult = classifier.classify(
             name: "Kurtlar Vadisi Sezon 1 Bölüm 5",
             group: "Dizi",
-            attributes: [:]
+            attributes: [:],
+            url: nil
         )
 
         if case .series = seriesResult {
@@ -759,7 +819,7 @@ struct ClassifierTests {
         ]
 
         for name in testCases {
-            let result = classifier.classify(name: name, group: "Live TV", attributes: [:])
+            let result = classifier.classify(name:name, group: "Live TV", attributes: [:], url: nil)
 
             #expect(result == .live,
                     "'\(name)' should be .live, got \(result)")
@@ -776,7 +836,7 @@ struct ClassifierTests {
         ]
 
         for name in testCases {
-            let result = classifier.classify(name: name, group: "▱ ULUSAL", attributes: [:])
+            let result = classifier.classify(name:name, group: "▱ ULUSAL", attributes: [:], url: nil)
 
             #expect(result == .live,
                     "'\(name)' with ▱ prefix should be .live, got \(result)")
@@ -792,7 +852,7 @@ struct ClassifierTests {
         ]
 
         for name in testCases {
-            let result = classifier.classify(name: name, group: "▱ DIAMANT SINEMA", attributes: [:])
+            let result = classifier.classify(name:name, group: "▱ DIAMANT SINEMA", attributes: [:], url: nil)
 
             // Should be live because of ▱ prefix
             #expect(result == .live,
@@ -809,7 +869,7 @@ struct ClassifierTests {
         ]
 
         for (name, group) in testCases {
-            let result = classifier.classify(name: name, group: group, attributes: [:])
+            let result = classifier.classify(name:name, group: group, attributes: [:], url: nil)
 
             if case .series = result {
                 // Expected - explicit series group overrides sequel pattern
@@ -818,5 +878,26 @@ struct ClassifierTests {
                         "'\(name)' in '\(group)' should be .series, got \(result)")
             }
         }
+    }
+
+    // MARK: - Performance
+
+    @Test("Performance - Classification should complete in <50μs per item")
+    func classificationPerformance() {
+        let url = URL(string: "https://example.com/vod#.mkv")
+
+        let start = Date()
+        for _ in 0..<10000 {
+            _ = classifier.classify(
+                name: "Test Movie (2025)",
+                group: "4K",
+                attributes: [:],
+                url: url
+            )
+        }
+        let duration = Date().timeIntervalSince(start)
+
+        // 10K classifications should take <500ms (50μs per item) - allows ~20,000 items/sec
+        #expect(duration < 0.5, "Classification is too slow: \(duration)s for 10K items")
     }
 }

@@ -79,6 +79,26 @@
             "target": "DetailedAnalysis",
             "configuration": "release",
             "preLaunchTask": "swift: Build Release DetailedAnalysis"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:m3u-parser-swift}",
+            "name": "Debug RealWorldTest",
+            "target": "RealWorldTest",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug RealWorldTest"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:m3u-parser-swift}",
+            "name": "Release RealWorldTest",
+            "target": "RealWorldTest",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release RealWorldTest"
         }
     ]
 }

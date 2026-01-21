@@ -86,7 +86,7 @@ struct IntegrationTests {
     @Test("Use custom classifier")
     func useCustomClassifier() async throws {
         struct AlwaysLiveClassifier: ContentClassifying {
-            func classify(name: String, group: String?, attributes: [String: String]) -> ContentType {
+            func classify(name: String, group: String?, attributes: [String: String], url: URL?) -> ContentType {
                 return .live
             }
         }
@@ -369,5 +369,30 @@ struct IntegrationTests {
         #expect(seriesInfo.name == "Unknown Series")
         #expect(seriesInfo.episodes.first?.season == nil)
         #expect(seriesInfo.episodes.first?.episode == nil)
+    }
+
+    @Test("Real playlist patterns - VOD movies should not be classified as live")
+    func vodMoviesShouldNotBeLive() async throws {
+        let m3u = """
+        #EXTM3U
+        #EXTINF:-1 xui-id="809650" group-title="4K",Yeni Hayata Hazırlık [4K HDR] (2025)
+        https://example.com/play#.mkv
+        #EXTINF:-1 xui-id="809340" group-title="AKSiYON & MACERA",The Shadow's Edge (2025)
+        https://example.com/vod#.mp4
+        #EXTINF:-1 xui-id="809313" group-title="KOMEDi & ROMANTiK",Good Fortune (2025)
+        https://example.com/movie.avi
+        #EXTINF:-1 xui-id="706526" group-title="▱ TÜRK ADAPTIF",Kanal D Drama (1080p)
+        https://example.com/live.m3u8
+        """
+
+        let playlist = try await M3UParser().parse(data: Data(m3u.utf8))
+
+        // First 3 should be movies (VOD)
+        #expect(playlist.items[0].contentType == .movie, "4K group with .mkv should be .movie")
+        #expect(playlist.items[1].contentType == .movie, "Genre group with .mp4 should be .movie")
+        #expect(playlist.items[2].contentType == .movie, "Genre group with .avi should be .movie")
+
+        // Last one should be live (HLS stream)
+        #expect(playlist.items[3].contentType == .live, "Live channel with .m3u8 should be .live")
     }
 }

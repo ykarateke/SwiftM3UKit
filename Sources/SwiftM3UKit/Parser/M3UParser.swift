@@ -347,7 +347,8 @@ public actor M3UParser {
         let contentType = classifier.classify(
             name: extinf.title,
             group: group,
-            attributes: extinf.attributes
+            attributes: extinf.attributes,
+            url: url
         )
 
         // Extract xui-id and timeshift from attributes
@@ -451,7 +452,8 @@ public actor M3UParser {
         let contentType = classifier.classify(
             name: extinf.title,
             group: group,
-            attributes: extinf.attributes
+            attributes: extinf.attributes,
+            url: url
         )
 
         // Extract xui-id and timeshift from attributes
@@ -497,7 +499,8 @@ public actor M3UParser {
         let contentType = classifier.classify(
             name: extinf.title,
             group: group,
-            attributes: extinf.attributes
+            attributes: extinf.attributes,
+            url: url
         )
 
         // Extract xui-id and timeshift from attributes

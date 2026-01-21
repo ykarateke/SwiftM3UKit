@@ -27,27 +27,32 @@ public struct ContentClassifier: ContentClassifying, Sendable {
     public init() {}
 
     /// Classifies content based on heuristic rules.
-    public func classify(name: String, group: String?, attributes: [String: String]) -> ContentType {
+    public func classify(name: String, group: String?, attributes: [String: String], url: URL?) -> ContentType {
         let nameLower = name.lowercased()
         let groupLower = group?.lowercased() ?? ""
         let originalGroup = group ?? ""
 
-        // Check for live TV first (▱ prefix indicates live channels)
+        // 1. Check for live TV prefix (▱ indicates live channels)
         if hasLiveGroupPrefix(in: originalGroup) {
             return .live
         }
 
-        // Check for series (most specific patterns)
+        // 2. Check for series (most specific patterns)
         if let seriesInfo = detectSeries(name: nameLower, group: groupLower) {
             return .series(season: seriesInfo.season, episode: seriesInfo.episode)
         }
 
-        // Check for movie
+        // 3. Check URL extension (strong VOD signal)
+        if hasVODExtension(url: url) {
+            return .movie
+        }
+
+        // 4. Check for movie
         if isMovie(name: nameLower, group: groupLower, originalName: name) {
             return .movie
         }
 
-        // Default to live
+        // 5. Default to live
         return .live
     }
 
@@ -105,8 +110,14 @@ public struct ContentClassifier: ContentClassifying, Sendable {
         "电影", "影片",
         // Spanish
         "película", "películas", "cine",
-        // Quality/Collection indicators
-        "4k", "fhd", "uhd", "2160p", "1080p",
+        // Turkish genre keywords
+        "aksiyon", "macera", "gizem", "gerilim",
+        "komedi", "romantik", "dram", "drama",
+        "korku", "bilim kurgu", "fantastik",
+        "animasyon", "aile", "cocuk",
+        "belgesel", "tarih", "biyografi",
+        "muzikaller", "western", "savas",
+        // Quality/Collection indicators (removed ambiguous quality tags: 4k, fhd, uhd, 2160p, 1080p)
         "top", "best", "world", "classics", "collection",
         "bollywood", "marvel", "dc", "disney", "pixar"
     ]
@@ -473,12 +484,32 @@ public struct ContentClassifier: ContentClassifying, Sendable {
         return false
     }
 
+    // MARK: - URL-based Detection
+
+    /// Checks if URL indicates VOD content via file extension
+    private func hasVODExtension(url: URL?) -> Bool {
+        guard let url = url else { return false }
+
+        let urlString = url.absoluteString.lowercased()
+
+        // Check for common VOD file extensions
+        let vodExtensions = [".mkv", ".mp4", ".avi", ".m4v", ".ts"]
+
+        for ext in vodExtensions {
+            if urlString.hasSuffix(ext) || urlString.contains("#\(ext)") {
+                return true
+            }
+        }
+
+        return false
+    }
+
     // MARK: - Movie Detection
 
     private func isMovie(name: String, group: String, originalName: String) -> Bool {
         // Check group name for movie indicators
         for keyword in movieGroupKeywords {
-            if group.contains(keyword) {
+            if group.contains(keyword) {  // Note: 'group' parameter is already lowercased from caller
                 return true
             }
         }

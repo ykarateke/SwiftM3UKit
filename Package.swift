@@ -11,7 +11,8 @@ let package = Package(
     products: [
         .library(name: "SwiftM3UKit", targets: ["SwiftM3UKit"]),
         .executable(name: "SeriesDiagnostic", targets: ["SeriesDiagnostic"]),
-        .executable(name: "DetailedAnalysis", targets: ["DetailedAnalysis"])
+        .executable(name: "DetailedAnalysis", targets: ["DetailedAnalysis"]),
+        .executable(name: "RealWorldTest", targets: ["RealWorldTest"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.4")
@@ -44,6 +45,11 @@ let package = Package(
             name: "DetailedAnalysis",
             dependencies: ["SwiftM3UKit"],
             path: "Tools/DetailedAnalysis"
+        ),
+        .executableTarget(
+            name: "RealWorldTest",
+            dependencies: ["SwiftM3UKit"],
+            path: "Sources/RealWorldTest"
         )
     ]
 )
